@@ -20,12 +20,21 @@ int main() {
 
 		BB *b2 = gen.CreateEmptyBB();
 		BB *b3 = gen.CreateEmptyBB();
+		BB *b4 = gen.CreateEmptyBB();
+		b1->AddSucc(b2);
+		b2->AddPred(b1);
+		b3->AddPred(b2);
+		b3->AddSucc(b2);
+		b2->AddPred(b3);
+		b2->AddSucc(b3);
+		b2->AddSucc(b4);
+		b4->AddPred(b2);
 		b2->AddInstrBackward(builder.BuildCmp(InstrType::U64, 1, 2));
-		b2->AddInstrBackward(builder.BuildJa(b3));
-		b2->AddInstrBackward(builder.BuildMul(InstrType::U64, 0, 0, 1));
-		b2->AddInstrBackward(builder.BuildAddI(InstrType::U64, 1, 1, uint64_t(1)));
-		b2->AddInstrBackward(builder.BuildJump(b2));
-		b3->AddInstrBackward(builder.BuildRet(InstrType::U64, 0));
+		b2->AddInstrBackward(builder.BuildJa(b4));
+		b3->AddInstrBackward(builder.BuildMul(InstrType::U64, 0, 0, 1));
+		b3->AddInstrBackward(builder.BuildAddI(InstrType::U64, 1, 1, uint64_t(1)));
+		b3->AddInstrBackward(builder.BuildJump(b2));
+		b4->AddInstrBackward(builder.BuildRet(InstrType::U64, 0));
 
 		g->dump();
 	} catch(const std::exception& e) {
