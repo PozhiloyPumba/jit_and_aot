@@ -13,6 +13,7 @@ class BB {
 public:
 	constexpr static const uint64_t INVALID_BB_ID = 0xDEADBEEFDEADBEEF;
 private:
+	static inline uint64_t nextBB_id = 0;
     uint64_t bbId_ = INVALID_BB_ID;
     std::list<BB *> preds_;
     std::list<BB *> succs_;
@@ -37,8 +38,8 @@ public:
     inline Graph *GetGraph() { return graph_; }
 
 public:
-    void SetId(uint64_t id) { bbId_ = id; }
-
+    inline void SetId(uint64_t id) { bbId_ = id; }
+    inline void SetDefaultId() { bbId_ = nextBB_id++; }
     void AddPred(BB *bb);
     void DeletePred(BB *bb);
     void AddSucc(BB *bb);

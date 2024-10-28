@@ -14,8 +14,8 @@ int main() {
 		g->SetRetType(InstrType::U64);
 		g->SetParams({std::make_pair(InstrType::U32, 0)});
 		BB *b1 = gen.CreateEmptyBB();
-		b1->AddInstrBackward(builder.BuildMovI(InstrType::U64, 0, uint64_t(1)));
-		b1->AddInstrBackward(builder.BuildMovI(InstrType::U64, 1, uint64_t(2)));
+		b1->AddInstrBackward(builder.BuildMovI(0, uint64_t(1)));
+		b1->AddInstrBackward(builder.BuildMovI(1, uint64_t(2)));
 		b1->AddInstrBackward(builder.BuildCast(InstrType::U64, 2, InstrType::U32, 0));
 
 		BB *b2 = gen.CreateEmptyBB();
@@ -32,7 +32,7 @@ int main() {
 		b2->AddInstrBackward(builder.BuildCmp(InstrType::U64, 1, 2));
 		b2->AddInstrBackward(builder.BuildJa(b4));
 		b3->AddInstrBackward(builder.BuildMul(InstrType::U64, 0, 0, 1));
-		b3->AddInstrBackward(builder.BuildAddI(InstrType::U64, 1, 1, uint64_t(1)));
+		b3->AddInstrBackward(builder.BuildAddI(1, 1, uint64_t(1)));
 		b3->AddInstrBackward(builder.BuildJump(b2));
 		b4->AddInstrBackward(builder.BuildRet(InstrType::U64, 0));
 

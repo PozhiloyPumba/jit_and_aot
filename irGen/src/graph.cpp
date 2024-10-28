@@ -11,7 +11,7 @@ void Graph::AddBB(BB *bb) {
     if (!bb)
         throw std::runtime_error("Null BB in "s + CUR_FUNC_NAME);
 
-    bb->SetId(uint64_t(bb));
+    bb->SetDefaultId();
     BBs_.push_back(bb);
     bb->SetGraph(this);
 }

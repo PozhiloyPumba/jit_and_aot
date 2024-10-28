@@ -17,6 +17,7 @@ private:
 public:
 	RegImmInstr(Opcode op, InstrType type, int reg, T imm): Instruction(op, type), reg_(reg), imm_(imm) {
 	}
+
 	std::string toString() override {
 		return Instruction::toString() + " " + RegToString() + std::to_string(reg_) + " " + std::to_string(imm_);
 	}
@@ -98,7 +99,7 @@ class JumpInstr: public Instruction {
 private:
 	BB *out_;
 public:
-	JumpInstr(Opcode op, InstrType type, BB *out): Instruction(op, type), out_(out){
+	JumpInstr(Opcode op, BB *out): Instruction(op, InstrType::VOID), out_(out){
 	}
 
 	std::string toString() override {

@@ -48,8 +48,8 @@ public:
     }
 
 	template<typename T>
-	RegImmInstr<T> *BuildMovI(InstrType type, int reg, T imm) {
-		auto *inst = new RegImmInstr(Opcode::MOVI, type, reg, imm);
+	RegImmInstr<T> *BuildMovI(int reg, T imm) {
+		auto *inst = new RegImmInstr(Opcode::MOVI, GetInstrType<T>(), reg, imm);
         instructions_.push_back(inst);
         return inst;
 	}
@@ -61,8 +61,8 @@ public:
 	}
 
 	template<typename T>
-	TwoRegImmInstr<T> *BuildAddI(InstrType type, int reg1, int reg2, T imm) {
-		auto *inst = new TwoRegImmInstr(Opcode::ADDI, type, reg1, reg2, imm);
+	TwoRegImmInstr<T> *BuildAddI(int reg1, int reg2, T imm) {
+		auto *inst = new TwoRegImmInstr(Opcode::ADDI, GetInstrType<T>(), reg1, reg2, imm);
         instructions_.push_back(inst);
         return inst;
 	}
@@ -74,13 +74,13 @@ public:
 	}
 
 	JumpInstr *BuildJump(BB *dest) {
-		auto *inst = new JumpInstr(Opcode::JMP, InstrType::U64, dest);
+		auto *inst = new JumpInstr(Opcode::JMP, dest);
         instructions_.push_back(inst);
         return inst;
 	}
 
 	JumpInstr *BuildJa(BB *dest) {
-		auto *inst = new JumpInstr(Opcode::JA, InstrType::U64, dest);
+		auto *inst = new JumpInstr(Opcode::JA, dest);
         instructions_.push_back(inst);
         return inst;
 	}
