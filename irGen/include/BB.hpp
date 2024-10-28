@@ -2,6 +2,7 @@
 #define __BB_HPP__
 
 #include <list>
+#include <cstdint>
 #include "helpers/defines.hpp"
 #include "instr.hpp"
 
