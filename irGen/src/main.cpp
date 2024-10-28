@@ -1,26 +1,32 @@
 #include <iostream>
 #include <memory>
 #include "IRBuilder.hpp"
-#include "graph.hpp"
+#include "function.hpp"
+#include <algorithm>
 
 int main() {
 	using namespace IRGen;
 	try {
 		InstructionBuilder builder;
 		IRGenerator gen;
-		gen.CreateGraph();
-		Graph *g = gen.GetGraph();
-		g->SetName("fact");
-		g->SetRetType(InstrType::U64);
-		g->SetParams({std::make_pair(InstrType::U32, 0)});
-		BB *b1 = gen.CreateEmptyBB();
-		b1->AddInstrBackward(builder.BuildMovI(0, uint64_t(1)));
-		b1->AddInstrBackward(builder.BuildMovI(1, uint64_t(2)));
-		b1->AddInstrBackward(builder.BuildCast(InstrType::U64, 2, InstrType::U32, 0));
+		
+		std::vector<InstrType> paramTypes{InstrType::U32};
+		std::vector<ParameterInstr *> params;
+		std::transform(paramTypes.begin(), paramTypes.end(), std::back_inserter(params), 
+			[&builder](InstrType t){ return builder.BuildParam(t);});
 
-		BB *b2 = gen.CreateEmptyBB();
-		BB *b3 = gen.CreateEmptyBB();
-		BB *b4 = gen.CreateEmptyBB();
+		Function *g = gen.CreateFunction("fact", InstrType::U64, params);
+		BB *b1 = gen.CreateEmptyBB(g);
+		auto *val1 = builder.BuildMovI(uint64_t(1));
+		auto *val2 = builder.BuildMovI(uint64_t(2));
+		auto *val3 = builder.BuildCast(InstrType::U64, g->GetParam(0));
+		b1->AddInstrBackward(val1);
+		b1->AddInstrBackward(val2);
+		b1->AddInstrBackward(val3);
+
+		BB *b2 = gen.CreateEmptyBB(g);
+		BB *b3 = gen.CreateEmptyBB(g);
+		BB *b4 = gen.CreateEmptyBB(g);
 		b1->AddSucc(b2);
 		b2->AddPred(b1);
 		b3->AddPred(b2);
@@ -29,13 +35,23 @@ int main() {
 		b2->AddSucc(b3);
 		b2->AddSucc(b4);
 		b4->AddPred(b2);
-		b2->AddInstrBackward(builder.BuildCmp(InstrType::U64, 1, 2));
-		b2->AddInstrBackward(builder.BuildJa(b4));
-		b3->AddInstrBackward(builder.BuildMul(InstrType::U64, 0, 0, 1));
-		b3->AddInstrBackward(builder.BuildAddI(1, 1, uint64_t(1)));
+		auto *phi1 = builder.BuildPhi(InstrType::U64);
+		auto *phi2 = builder.BuildPhi(InstrType::U64);
+		b2->AddInstrBackward(phi1);
+		b2->AddInstrBackward(phi2);
+		auto *valCmp = builder.BuildCmp(InstrType::U64, phi1, val2);
+		b2->AddInstrBackward(valCmp);
+		b2->AddInstrBackward(builder.BuildJa(b4, valCmp, b3));
+		auto *valMul = builder.BuildMul(InstrType::U64, val1, val1);
+		b3->AddInstrBackward(valMul);
+		auto *valAdd = builder.BuildAddI(valMul, uint64_t(1));
+		b3->AddInstrBackward(valAdd);
 		b3->AddInstrBackward(builder.BuildJump(b2));
-		b4->AddInstrBackward(builder.BuildRet(InstrType::U64, 0));
-
+		b4->AddInstrBackward(builder.BuildRet(InstrType::U64, phi2));
+		phi1->SetIncoming(b1, val2);
+		phi1->SetIncoming(b3, valAdd);
+		phi2->SetIncoming(b3, valMul);
+		phi2->SetIncoming(b1, val1);
 		g->dump();
 	} catch(const std::exception& e) {
     	std::cerr<<"Exception: "<<e.what()<<std::endl;

@@ -2,6 +2,8 @@
 #define __INSTRDEF_HPP__
 
 #include <string>
+#include <cassert> 
+#include <vector>
 #include "instr.hpp"
 #include "BB.hpp"
 
@@ -9,101 +11,141 @@ namespace IRGen {
 
 using namespace std::literals;
 
+// parameters of function is parameter instruction
+class ParameterInstr: public Instruction {
+public:
+	ParameterInstr(InstrType type, bool setId = true): Instruction(Opcode::PARAM, type, setId) {
+	}
+
+	inline std::string toString() const override {
+		return IRGen::toString(instrType_) + " @"s + std::to_string(instrId_);
+	}
+};
+
+
 template<typename T>
-class RegImmInstr: public Instruction {
+class ImmToValInstr: public Instruction {
 private:
-	int reg_;
 	T imm_;
 public:
-	RegImmInstr(Opcode op, InstrType type, int reg, T imm, bool setId = true): Instruction(op, type, setId), reg_(reg), imm_(imm) {
-	}
+	ImmToValInstr(Opcode op, InstrType type, T imm, bool setId = true): Instruction(op, type, setId), imm_(imm) {}
 
-	std::string toString() override {
-		return Instruction::toString() + " " + RegToString() + std::to_string(reg_) + " " + std::to_string(imm_);
+	inline std::string toString() const override {
+		return Instruction::toString() + " @" + std::to_string(instrId_) + " " + std::to_string(imm_);
 	}
 };
 
-class OneRegInstr: public Instruction {
+class OneValInstr: public Instruction {
 private:
-	int reg_;
+	Instruction *value_;
 public:
-	OneRegInstr(Opcode op, InstrType type, int reg, bool setId = true): Instruction(op, type, setId), reg_(reg) {
+	OneValInstr(Opcode op, InstrType type, Instruction *val, bool setId = true): Instruction(op, type, setId), value_(val) {
 	}
 
-	std::string toString() override {
-		return Instruction::toString() + " " + RegToString() + std::to_string(reg_);
+	inline std::string toString() const override  {
+		return Instruction::toString() + " @" + std::to_string(value_->GetId());
 	}
 };
-
 
 class CastInstr: public Instruction {
 private:
-	int reg1_;
-	int reg2_;
-	InstrType type2_;
+	Instruction *from_;
 public:
-	CastInstr(Opcode op, InstrType type1, int reg1, InstrType type2, int reg2, bool setId = true): Instruction(op, type1, setId), reg1_(reg1)
-	, reg2_(reg2), type2_(type2) {
+	CastInstr(Opcode op, InstrType type, Instruction *from, bool setId = true): Instruction(op, type, setId), from_(from) {
+		assert(from);
 	}
 
-	std::string toString() override {
-		return Instruction::toString() + "from" + IRGen::toString(type2_) + " " + RegToString() + std::to_string(reg1_) + 
-			" " + IRGen::typeToReg(type2_) + std::to_string(reg2_);
+	inline std::string toString() const override  {
+		return Instruction::toString() + "from" + IRGen::toString(from_->GetType()) + " @" + std::to_string(instrId_) + 
+			" @" + std::to_string(from_->GetId());
 	}
 };
 
-class TwoRegInstr: public Instruction {
+class CmpInstr: public Instruction {
 private:
-	int reg1_;
-	int reg2_;
+	Instruction *first_;
+	Instruction *second_;
 public:
-	TwoRegInstr(Opcode op, InstrType type, int reg1, int reg2, bool setId = true): Instruction(op, type, setId), reg1_(reg1), reg2_(reg2) {
+	CmpInstr(Opcode op, InstrType type, Instruction *first, Instruction *second, bool setId = true): 
+		Instruction(op, type, setId), first_(first), second_(second) {
 	}
-	std::string toString() override {
-		return Instruction::toString() + " " + RegToString() + std::to_string(reg1_) + " " + RegToString() + std::to_string(reg2_);
+
+	inline std::string toString() const override  {
+		return Instruction::toString() + " @" + std::to_string(instrId_) + " @" + std::to_string(first_->GetId()) + " @" + std::to_string(second_->GetId());
 	}
 };
 
 
-class ThreeRegInstr: public Instruction {
+class TwoValInstr: public Instruction {
 private:
-	int reg1_;
-	int reg2_;
-	int reg3_;
+	Instruction *first_;
+	Instruction *second_;
 public:
-	ThreeRegInstr(Opcode op, InstrType type, int reg1, int reg2, int reg3, bool setId = true): Instruction(op, type, setId), 
-		reg1_(reg1), reg2_(reg2), reg3_(reg3) {
+	TwoValInstr(Opcode op, InstrType type, Instruction *first, Instruction *second, bool setId = true): 
+		Instruction(op, type, setId), 
+		first_(first), second_(second) {
+		assert(first && second);
 	}
-	std::string toString() override {
-		return Instruction::toString() + " " + RegToString() + std::to_string(reg1_) + " " + RegToString() + std::to_string(reg2_) +" " + RegToString() + std::to_string(reg3_);
+	inline std::string toString() const override  {
+		return Instruction::toString() + " @" + std::to_string(instrId_) + " @" + std::to_string(first_->GetId()) + 
+				" @" + std::to_string(second_->GetId());
 	}
 };
 
 template<typename T>
-class TwoRegImmInstr: public Instruction {
+class ValAndImmInstr: public Instruction {
 private:
-	int reg1_;
-	int reg2_;
+	Instruction *value_;
 	T imm_;
 public:
-	TwoRegImmInstr(Opcode op, InstrType type, int reg1, int reg2, T imm, bool setId = true): Instruction(op, type, setId), 
-		reg1_(reg1), reg2_(reg2), imm_(imm) {
+	ValAndImmInstr(Opcode op, InstrType type, Instruction *val, T imm, bool setId = true): Instruction(op, type, setId), 
+		value_(val), imm_(imm) {
 	}
 	
-	std::string toString() override {
-		return Instruction::toString() + " " + RegToString() + std::to_string(reg1_) + " " + RegToString() + std::to_string(reg2_) +" " + std::to_string(imm_);
+	inline std::string toString() const override  {
+		return Instruction::toString() + " @" + std::to_string(instrId_) + " @" + std::to_string(value_->GetId()) + " " + std::to_string(imm_);
 	}
 };
 
 class JumpInstr: public Instruction {
 private:
-	BB *out_;
+	BB *trueOut_;
+	BB *falseOut_;
+	Instruction *pred_;
 public:
-	JumpInstr(Opcode op, BB *out, bool setId = true): Instruction(op, InstrType::VOID, setId), out_(out){
+	JumpInstr(Opcode op, BB *trueJump, Instruction *pred = nullptr, BB *falseJump = nullptr, bool setId = true): Instruction(op, InstrType::VOID, setId), 
+		trueOut_(trueJump), falseOut_(falseJump), pred_(pred) {
+		assert(trueOut_);
+		assert(!falseOut_ == !pred);
 	}
 
-	std::string toString() override {
-		return IRGen::toString(opcode_) + " "s + std::to_string(out_->GetId());
+	inline std::string toString() const override  {
+		auto falseStr = falseOut_ ? " %" + std::to_string(falseOut_->GetId()) : "";
+		auto predStr = falseOut_ ? " @" + std::to_string(pred_->GetId()) + " %": " %";
+		return IRGen::toString(opcode_) + predStr + std::to_string(trueOut_->GetId()) + falseStr;
+	}
+};
+
+class PhiInstr: public Instruction {
+private:
+	std::vector<std::pair<BB *, Instruction *>> preds_;
+
+public:
+	PhiInstr(InstrType t, bool setId = true): Instruction(Opcode::PHI, t, setId) {
+	}
+
+	inline void SetIncoming(BB *pred, Instruction *val) {
+		preds_.push_back({pred, val});
+	}
+
+	inline std::string toString() const override  {
+		std::string s;
+		const char *padding = " ";
+		for(const auto &p: preds_) {
+			s += padding + "[@"s + std::to_string(p.second->GetId()) + " %" + std::to_string(p.first->GetId()) +  "]";
+			padding = ", ";
+		}
+		return Instruction::toString() + " @" + std::to_string(instrId_) + s;
 	}
 };
 

@@ -7,7 +7,7 @@
 #include "instr.hpp"
 
 namespace IRGen {
-class Graph;
+class Function;
 
 class BB {
 public:
@@ -19,7 +19,7 @@ private:
     std::list<BB *> succs_;
     Instruction *beginBB_;
     Instruction *endBB_;
-    Graph *graph_;
+    Function *graph_;
     inline void SetDefaultId() { bbId_ = nextBB_id++; }
 
 public:
@@ -27,7 +27,7 @@ public:
         if (setId) SetDefaultId();
         else bbId_ = INVALID_BB_ID;
     }
-    explicit BB(Graph *graph, bool setId = true) : beginBB_(nullptr), endBB_(nullptr), graph_(graph) {
+    explicit BB(Function *graph, bool setId = true) : beginBB_(nullptr), endBB_(nullptr), graph_(graph) {
         if (setId) SetDefaultId();
         else bbId_ = INVALID_BB_ID;
     }
@@ -40,7 +40,7 @@ public:
     inline std::list<BB *> &GetSuccs() { return succs_; }
     inline Instruction *GetBeginBB() { return beginBB_; }
     inline Instruction *GetEndBB() { return endBB_; }
-    inline Graph *GetGraph() { return graph_; }
+    inline Function *GetFunction() { return graph_; }
 
 public:
     inline void SetId(uint64_t id) { bbId_ = id; }
@@ -51,7 +51,7 @@ public:
 
     void InsertInstrBefore(Instruction *insert, Instruction *anchor);
     void InsertInstrAfter(Instruction *insert, Instruction *anchor);
-    void SetGraph(Graph *newGraph) { graph_ = newGraph; }
+    void SetFunction(Function *newFunction) { graph_ = newFunction; }
     void AssasinateInstr(Instruction *instr);
     void AddInstrForward(Instruction *instr);
     void AddInstrBackward(Instruction *instr);

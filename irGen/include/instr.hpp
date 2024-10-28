@@ -40,6 +40,7 @@ public:
     inline BB *GetBB() const { return parentBB_; }
     inline Opcode GetOpcode() const { return opcode_; }
     inline uint64_t GetId() const { return instrId_; }
+    inline InstrType GetType() const { return instrType_; }
 
     inline void SetPrevInstr(Instruction *instr) { prev_ = instr; }
     inline void SetNextInstr(Instruction *instr) { next_ = instr; }
@@ -52,8 +53,8 @@ public:
 	// I am anchor
     void InsertAfter(Instruction *toInsert);
 
-	virtual std::string toString() { return IRGen::toString(opcode_) + std::string(".") + IRGen::toString(instrType_); };
-	std::string RegToString() { return IRGen::typeToReg(instrType_);}
+	virtual std::string toString() const { return IRGen::toString(opcode_) + std::string(".") + IRGen::toString(instrType_); };
+	inline std::string RegToString() const { return IRGen::typeToReg(instrType_);}
 };
 
 }

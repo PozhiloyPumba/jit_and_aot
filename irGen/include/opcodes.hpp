@@ -14,6 +14,8 @@ namespace IRGen {
     c(JMP) \
     c(RET) \
 	c(CAST) \
+	c(PHI) \
+	c(PARAM) \
     c(INVALID_INSTR)
 
 CREATE_ENUM(Opcode, ENUM_OPCODES)

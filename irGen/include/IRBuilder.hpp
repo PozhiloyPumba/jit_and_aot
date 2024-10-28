@@ -9,18 +9,17 @@ namespace IRGen {
 
 class IRGenerator {
   public:
-    IRGenerator() : graph_(nullptr) {}
+    IRGenerator() {}
     ~IRGenerator() { Clear(); }
 
   public:
-    void CreateGraph();
-    BB *CreateEmptyBB();
-    Graph *GetGraph() const { return graph_; }
+    Function *CreateFunction(const std::string &name, InstrType retType, const std::vector<ParameterInstr *> &params);
+    BB *CreateEmptyBB(Function *);
     void Clear();
 
   private:
     std::vector<BB *> BBs_;
-    Graph *graph_;
+    std::vector<Function *> graph_;
 };
 
 class InstructionBuilder final {
@@ -48,27 +47,27 @@ public:
     }
 
 	template<typename T>
-	RegImmInstr<T> *BuildMovI(int reg, T imm) {
-		auto *inst = new RegImmInstr(Opcode::MOVI, GetInstrType<T>(), reg, imm);
+	ImmToValInstr<T> *BuildMovI(T imm) {
+		auto *inst = new ImmToValInstr(Opcode::MOVI, GetInstrType<T>(), imm);
         instructions_.push_back(inst);
         return inst;
 	}
 	
-	ThreeRegInstr *BuildMul(InstrType type, int reg1, int reg2, int reg3) {
-		auto *inst = new ThreeRegInstr(Opcode::MUL, type, reg1, reg2, reg3);
+	TwoValInstr *BuildMul(InstrType type, Instruction *first, Instruction *second) {
+		auto *inst = new TwoValInstr(Opcode::MUL, type, first, second);
         instructions_.push_back(inst);
         return inst;
 	}
 
 	template<typename T>
-	TwoRegImmInstr<T> *BuildAddI(int reg1, int reg2, T imm) {
-		auto *inst = new TwoRegImmInstr(Opcode::ADDI, GetInstrType<T>(), reg1, reg2, imm);
+	ValAndImmInstr<T> *BuildAddI(Instruction *val, T imm) {
+		auto *inst = new ValAndImmInstr(Opcode::ADDI, GetInstrType<T>(), val, imm);
         instructions_.push_back(inst);
         return inst;
 	}
 
-	TwoRegInstr *BuildCmp(InstrType type, int reg1, int reg2) {
-		auto *inst = new TwoRegInstr(Opcode::CMP, type, reg1, reg2);
+	CmpInstr *BuildCmp(InstrType type, Instruction *first, Instruction *second) {
+		auto *inst = new CmpInstr(Opcode::CMP, type, first, second);
         instructions_.push_back(inst);
         return inst;
 	}
@@ -79,19 +78,31 @@ public:
         return inst;
 	}
 
-	JumpInstr *BuildJa(BB *dest) {
-		auto *inst = new JumpInstr(Opcode::JA, dest);
+	JumpInstr *BuildJa(BB *trueJump, Instruction *predicate, BB *falseJump) {
+		auto *inst = new JumpInstr(Opcode::JA, trueJump, predicate, falseJump);
         instructions_.push_back(inst);
         return inst;
 	}
-	OneRegInstr *BuildRet(InstrType type, int reg) {
-		auto *inst = new OneRegInstr(Opcode::RET, type, reg);
+	OneValInstr *BuildRet(InstrType type, Instruction *val) {
+		auto *inst = new OneValInstr(Opcode::RET, type, val);
         instructions_.push_back(inst);
         return inst;
 	}
 	
-	CastInstr *BuildCast(InstrType type1, int reg1, InstrType type2, int reg2) {
-		auto *inst = new CastInstr(Opcode::CAST, type1, reg1, type2, reg2);
+	CastInstr *BuildCast(InstrType type, Instruction *from) {
+		auto *inst = new CastInstr(Opcode::CAST, type, from);
+        instructions_.push_back(inst);
+        return inst;
+	}
+
+    PhiInstr *BuildPhi(InstrType type) {
+		auto *inst = new PhiInstr(type);
+        instructions_.push_back(inst);
+        return inst;
+	}
+
+    ParameterInstr *BuildParam(InstrType type) {
+		auto *inst = new ParameterInstr(type);
         instructions_.push_back(inst);
         return inst;
 	}

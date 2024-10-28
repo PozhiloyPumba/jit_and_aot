@@ -141,7 +141,7 @@ void BB::dump() {
 		std::cout << "Empty" << std::endl;
 		return;
 	}
-	std::cout << bbId_ << ":" << std::endl;
+	std::cout << "%" << bbId_ << ":" << std::endl;
 	while(cur) {
 		std::cout << "\t" << cur->toString() << std::endl;
 		cur = cur->GetNextInstr();

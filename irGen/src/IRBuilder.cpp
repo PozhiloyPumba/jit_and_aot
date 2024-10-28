@@ -1,31 +1,36 @@
 #include "IRBuilder.hpp"
-#include "graph.hpp"
+#include "function.hpp"
 #include "BB.hpp"
+#include <cassert>
 
 namespace IRGen {
 
-void IRGenerator::CreateGraph() {
-	if (graph_ == nullptr) {
-		graph_ = new Graph();
-	}
+Function *IRGenerator::CreateFunction(const std::string &name, InstrType retType, const std::vector<ParameterInstr *> &params) {
+    auto *f = new Function();
+    graph_.push_back(f);
+    f->SetName(name);
+    f->SetRetType(retType);
+    f->SetParams(params);
+    return f;
 }
-BB *IRGenerator::CreateEmptyBB() {
+BB *IRGenerator::CreateEmptyBB(Function *parent) {
     auto *bb = new BB();
     BBs_.push_back(bb);
-    if (graph_ != nullptr) {
-        graph_->AddBB(bb);
+    if (parent != nullptr) {
+        parent->AddBB(bb);
     }
     return bb;
 }
 
 void IRGenerator::Clear() {
+    for (auto *f: graph_) {
+        delete f;
+    }
+    graph_.clear();
     for (auto *bb : BBs_) {
         delete bb;
     }
     BBs_.clear();
-
-    delete graph_;
-    graph_ = nullptr;
 }
 
 }

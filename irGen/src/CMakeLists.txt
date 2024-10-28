@@ -1,7 +1,7 @@
 set(SOURCES
     BB.cpp
     instr.cpp
-    graph.cpp
+    function.cpp
 	IRBuilder.cpp
 )
 
