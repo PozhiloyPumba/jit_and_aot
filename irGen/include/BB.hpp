@@ -20,12 +20,17 @@ private:
     Instruction *beginBB_;
     Instruction *endBB_;
     Graph *graph_;
+    inline void SetDefaultId() { bbId_ = nextBB_id++; }
+
 public:
-    BB(): bbId_(INVALID_BB_ID), 
-		beginBB_(nullptr), endBB_(nullptr), graph_(nullptr){};
-    explicit BB(Graph *graph)
-        : bbId_(INVALID_BB_ID), 
-		beginBB_(nullptr), endBB_(nullptr), graph_(graph){};
+    BB(bool setId = true): beginBB_(nullptr), endBB_(nullptr), graph_(nullptr) {
+        if (setId) SetDefaultId();
+        else bbId_ = INVALID_BB_ID;
+    }
+    explicit BB(Graph *graph, bool setId = true) : beginBB_(nullptr), endBB_(nullptr), graph_(graph) {
+        if (setId) SetDefaultId();
+        else bbId_ = INVALID_BB_ID;
+    }
 
     NO_COPY_NO_MOVE(BB);
     ~BB() = default;
@@ -39,7 +44,6 @@ public:
 
 public:
     inline void SetId(uint64_t id) { bbId_ = id; }
-    inline void SetDefaultId() { bbId_ = nextBB_id++; }
     void AddPred(BB *bb);
     void DeletePred(BB *bb);
     void AddSucc(BB *bb);
