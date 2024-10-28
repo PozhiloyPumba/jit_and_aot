@@ -1,6 +1,6 @@
 #include "IRBuilder.hpp"
-#include "function.hpp"
 #include "BB.hpp"
+#include "function.hpp"
 #include <cassert>
 
 namespace IRGen {
@@ -23,7 +23,7 @@ BB *IRGenerator::CreateEmptyBB(Function *parent) {
 }
 
 void IRGenerator::Clear() {
-    for (auto *f: graph_) {
+    for (auto *f : graph_) {
         delete f;
     }
     graph_.clear();
@@ -33,4 +33,4 @@ void IRGenerator::Clear() {
     BBs_.clear();
 }
 
-}
+} // namespace IRGen
