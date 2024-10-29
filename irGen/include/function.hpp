@@ -5,6 +5,8 @@
 #include "helpers/defines.hpp"
 #include <list>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 namespace IRGen {
@@ -27,12 +29,9 @@ public:
     NO_COPY_NO_MOVE(Function);
     ~Function() = default;
 
-    inline BB *GetFirstBB() {
-        return firstBB_;
-    }
-    inline BB *GetLastBB() {
-        return lastBB_;
-    }
+    CONST_AND_NON_CONST_GETTER(GetFirstBB, firstBB_);
+    CONST_AND_NON_CONST_GETTER(GetLastBB, lastBB_);
+
     inline void SetFirstBB(BB *bb) {
         firstBB_ = bb;
     }
@@ -59,6 +58,8 @@ public:
     void DeletePreds(BB *bb);
     void DeleteSuccs(BB *bb);
     void dump() const;
+    std::unordered_map<BB *, std::unordered_set<BB *>> buildDominatorTree() const;
+    void loopAnalyze() const;
 };
 
 } // namespace IRGen

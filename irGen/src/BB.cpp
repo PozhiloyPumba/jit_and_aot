@@ -55,10 +55,11 @@ void BB::InsertInstrBefore(Instruction *insert, Instruction *anchor) {
     auto prev = anchor->GetPrevInstr();
     insert->SetPrevInstr(prev);
     insert->SetNextInstr(anchor);
-    prev->SetNextInstr(insert);
     anchor->SetPrevInstr(insert);
     if (!prev)
         beginBB_ = insert;
+    else
+        prev->SetNextInstr(insert);
 }
 
 void BB::InsertInstrAfter(Instruction *insert, Instruction *anchor) {
@@ -73,10 +74,11 @@ void BB::InsertInstrAfter(Instruction *insert, Instruction *anchor) {
     auto next = anchor->GetNextInstr();
     insert->SetNextInstr(next);
     insert->SetPrevInstr(anchor);
-    next->SetPrevInstr(insert);
     anchor->SetNextInstr(insert);
     if (!next)
         endBB_ = insert;
+    else
+        next->SetPrevInstr(insert);
 }
 
 void BB::AssasinateInstr(Instruction *instr) {

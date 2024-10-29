@@ -13,6 +13,14 @@
     NO_COPY(name);                                                                                                               \
     NO_MOVE(name);
 
+#define CONST_AND_NON_CONST_GETTER(name, field)                                                                                  \
+    inline auto &name() const {                                                                                                  \
+        return field;                                                                                                            \
+    }                                                                                                                            \
+    inline auto &name() {                                                                                                        \
+        return field;                                                                                                            \
+    }
+
 #include <source_location>
 #define CUR_FUNC_NAME std::source_location::current().function_name()
 

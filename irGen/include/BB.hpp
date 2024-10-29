@@ -44,26 +44,15 @@ public:
     NO_COPY_NO_MOVE(BB);
     ~BB() = default;
 
-    inline uint64_t GetId() {
+    inline uint64_t GetId() const {
         return bbId_;
     }
-    inline std::list<BB *> &GetPreds() {
-        return preds_;
-    }
-    inline std::array<BB *, 2> &GetSuccs() {
-        return succs_;
-    }
-    inline Instruction *GetBeginBB() {
-        return beginBB_;
-    }
-    inline Instruction *GetEndBB() {
-        return endBB_;
-    }
-    inline Function *GetFunction() {
-        return graph_;
-    }
+    CONST_AND_NON_CONST_GETTER(GetPreds, preds_);
+    CONST_AND_NON_CONST_GETTER(GetSuccs, succs_);
+    CONST_AND_NON_CONST_GETTER(GetBeginBB, beginBB_);
+    CONST_AND_NON_CONST_GETTER(GetEndBB, endBB_);
+    CONST_AND_NON_CONST_GETTER(GetFunction, graph_);
 
-public:
     inline void SetId(uint64_t id) {
         bbId_ = id;
     }

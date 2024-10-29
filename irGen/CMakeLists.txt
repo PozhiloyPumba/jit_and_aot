@@ -16,8 +16,7 @@ macro( add_recursive retVal dir ext1 excl)
     endforeach()
 endmacro( add_recursive )
 
-add_recursive(ALL_SOURCES_FILES "." "*.hpp" "/build/")
-add_recursive(ALL_SOURCES_FILES "." "*.cpp" "/build/")
+add_recursive(ALL_SOURCES_FILES "." "*.[ch]pp" "/build/")
 
 find_program(CLANG_FORMAT_EXECUTABLE NAMES clang-format)
 
@@ -42,4 +41,4 @@ endif()
 include_directories(include)
 
 add_subdirectory(src)
-# add_subdirectory(tests)
+add_subdirectory(tests)
