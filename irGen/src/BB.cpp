@@ -1,5 +1,6 @@
 #include "BB.hpp"
 #include <algorithm>
+#include <function.hpp>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -132,6 +133,9 @@ void BB::AddInstrBackward(Instruction *instr) {
         endBB_->SetNextInstr(instr);
         endBB_ = instr;
     }
+}
+bool BB::DominatedBy(BB *other) {
+    return graph_->DominatedBy(this, other);
 }
 
 void BB::dump() const {

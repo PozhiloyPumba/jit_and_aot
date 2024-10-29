@@ -1,5 +1,6 @@
 #include "IRBuilder.hpp"
 #include "function.hpp"
+#include "loopAnalyzer.hpp"
 #include <algorithm>
 #include <iostream>
 #include <memory>

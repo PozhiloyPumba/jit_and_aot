@@ -78,6 +78,22 @@ void Function::DeleteSuccs(BB *bb) {
     });
 }
 
+bool Function::DominatedBy(BB *child, BB *parent) const {
+    assert(child);
+    assert(parent);
+    if (child->GetFunction() != this || parent->GetFunction() != this)
+        throw std::runtime_error("not known BB in "s + CUR_FUNC_NAME);
+
+    auto *tmp = domTreeParents_.at(child);
+
+    while (tmp) {
+        if (tmp == parent)
+            return true;
+        tmp = domTreeParents_.at(tmp);
+    }
+    return false;
+}
+
 void Function::dump() const {
     std::cout << IRGen::toString(retType_) << " " << name_ << "(";
     const char *padding = "";
@@ -89,7 +105,9 @@ void Function::dump() const {
     std::for_each(BBs_.begin(), BBs_.end(), [](auto *b) { b->dump(); });
 }
 
-std::unordered_map<BB *, std::unordered_set<BB *>> Function::buildDominatorTree() const {
+std::unordered_map<BB *, std::unordered_set<BB *>> &Function::buildDominatorTree() {
+    if (dTreeBuild)
+        return domTree_;
     std::unordered_set<uint64_t> visited;
     std::function<void(const BB *, const BB *)> dfs;
 
@@ -106,26 +124,27 @@ std::unordered_map<BB *, std::unordered_set<BB *>> Function::buildDominatorTree(
         }
     };
 
-    std::unordered_map<BB *, std::unordered_set<BB *>> dominatorTree;
     for (auto *cur_bb : BBs_) {
         assert(cur_bb != nullptr);
         visited.clear();
         dfs(firstBB_, cur_bb);
-        std::copy_if(BBs_.begin(), BBs_.end(), std::inserter(dominatorTree[cur_bb], dominatorTree[cur_bb].end()),
+        std::copy_if(BBs_.begin(), BBs_.end(), std::inserter(domTree_[cur_bb], domTree_[cur_bb].end()),
                      [cur_bb, &visited](const auto *bb) { return (bb != cur_bb) && visited.find(bb->GetId()) == visited.end(); });
     }
 
-    for (auto &[bb, dominated] : dominatorTree) {
+    for (auto &[bb, dominated] : domTree_) {
         std::unordered_set<BB *> saved = dominated;
         for (const auto &dominated_bb : saved) {
-            std::for_each(dominatorTree[dominated_bb].begin(), dominatorTree[dominated_bb].end(),
+            std::for_each(domTree_[dominated_bb].begin(), domTree_[dominated_bb].end(),
                           [&dominated](auto *bb) { dominated.erase(bb); });
         }
     }
-
-    return dominatorTree;
+    domTreeParents_[firstBB_] = nullptr;
+    for (auto &[bb, dominated] : domTree_) {
+        std::for_each(dominated.begin(), dominated.end(), [this, &bb](auto *cur) { domTreeParents_[cur] = bb; });
+    }
+    dTreeBuild = true;
+    return domTree_;
 }
-
-void Function::loopAnalyze() const {}
 
 } // namespace IRGen

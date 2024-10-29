@@ -22,6 +22,9 @@ private:
     std::string name_;
     std::vector<ParameterInstr *> params_;
     InstrType retType_;
+    std::unordered_map<BB *, std::unordered_set<BB *>> domTree_;
+    std::unordered_map<BB *, BB *> domTreeParents_;
+    bool dTreeBuild = false;
 
 public:
     Function() : firstBB_(nullptr), lastBB_(nullptr) {}
@@ -57,9 +60,12 @@ public:
     void AddBBAsSucc(BB *newBB, BB *anchor, bool cond);
     void DeletePreds(BB *bb);
     void DeleteSuccs(BB *bb);
+    bool DominatedBy(BB *child, BB *parent) const;
     void dump() const;
-    std::unordered_map<BB *, std::unordered_set<BB *>> buildDominatorTree() const;
-    void loopAnalyze() const;
+    std::list<BB *> &GetAllBBs() {
+        return BBs_;
+    }
+    std::unordered_map<BB *, std::unordered_set<BB *>> &buildDominatorTree();
 };
 
 } // namespace IRGen

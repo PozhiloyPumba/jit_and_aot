@@ -3,6 +3,7 @@
 
 #include "helpers/defines.hpp"
 #include "instr.hpp"
+#include "loop.hpp"
 #include <array>
 #include <cstdint>
 #include <list>
@@ -26,6 +27,8 @@ private:
     inline void SetDefaultId() {
         bbId_ = nextBB_id++;
     }
+
+    Loop *loop_ = nullptr;
 
 public:
     BB(bool setId = true) : beginBB_(nullptr), endBB_(nullptr), graph_(nullptr) {
@@ -52,6 +55,7 @@ public:
     CONST_AND_NON_CONST_GETTER(GetBeginBB, beginBB_);
     CONST_AND_NON_CONST_GETTER(GetEndBB, endBB_);
     CONST_AND_NON_CONST_GETTER(GetFunction, graph_);
+    CONST_AND_NON_CONST_GETTER(GetLoop, loop_);
 
     inline void SetId(uint64_t id) {
         bbId_ = id;
@@ -69,6 +73,7 @@ public:
     void AssasinateInstr(Instruction *instr);
     void AddInstrForward(Instruction *instr);
     void AddInstrBackward(Instruction *instr);
+    bool DominatedBy(BB *other);
     void dump() const;
 };
 

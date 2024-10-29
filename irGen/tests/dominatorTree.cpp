@@ -27,7 +27,7 @@ TEST(DominatorTree_Test, FirstExample) {
     g->SetFirstBB(A);
     auto d = g->buildDominatorTree();
 
-    std::unordered_set<BB*> empty;
+    std::unordered_set<BB *> empty;
     ASSERT_EQ(d[A], std::unordered_set({B}));
     ASSERT_EQ(d[B], std::unordered_set({C, D, F}));
     ASSERT_EQ(d[C], empty);
@@ -76,7 +76,7 @@ TEST(DominatorTree_Test, SecondExample) {
     g->SetFirstBB(A);
     auto d = g->buildDominatorTree();
 
-    std::unordered_set<BB*> empty;
+    std::unordered_set<BB *> empty;
     ASSERT_EQ(d[A], std::unordered_set({B}));
     ASSERT_EQ(d[B], std::unordered_set({C, J}));
     ASSERT_EQ(d[C], std::unordered_set({D}));
@@ -126,10 +126,10 @@ TEST(DominatorTree_Test, ThirdExample) {
     g->SetFirstBB(A);
     auto d = g->buildDominatorTree();
 
-    std::unordered_set<BB*> empty;
+    std::unordered_set<BB *> empty;
 
     ASSERT_EQ(d[A], std::unordered_set({B}));
-    ASSERT_EQ(d[B], std::unordered_set({C, D, E, G, I})); 
+    ASSERT_EQ(d[B], std::unordered_set({C, D, E, G, I}));
     ASSERT_EQ(d[C], empty);
     ASSERT_EQ(d[D], empty);
     ASSERT_EQ(d[E], std::unordered_set({F}));

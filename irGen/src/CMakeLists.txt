@@ -3,6 +3,7 @@ set(SOURCES
     instr.cpp
     function.cpp
 	IRBuilder.cpp
+    loopAnalyzer.cpp
 )
 
 add_library(ir_gen ${SOURCES})
