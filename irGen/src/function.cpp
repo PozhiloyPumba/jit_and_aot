@@ -81,6 +81,7 @@ void Function::DeleteSuccs(BB *bb) {
 bool Function::DominatedBy(BB *child, BB *parent) const {
     assert(child);
     assert(parent);
+    assert(dTreeBuild);
     if (child->GetFunction() != this || parent->GetFunction() != this)
         throw std::runtime_error("not known BB in "s + CUR_FUNC_NAME);
 
@@ -92,6 +93,14 @@ bool Function::DominatedBy(BB *child, BB *parent) const {
         tmp = domTreeParents_.at(tmp);
     }
     return false;
+}
+
+BB *Function::GetIDomFor(BB *bb) const {
+    assert(bb);
+    assert(dTreeBuild);
+    if (bb->GetFunction() != this)
+        throw std::runtime_error("not known BB in "s + CUR_FUNC_NAME);
+    return domTreeParents_.at(bb);
 }
 
 void Function::dump() const {

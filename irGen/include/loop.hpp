@@ -9,10 +9,10 @@
 namespace IRGen {
 
 class Loop {
-    BB *header_;
+    BB *header_ = nullptr;
     std::unordered_set<BB *> latches_;
     std::unordered_set<BB *> body_;
-    Loop *outerLoop_;
+    Loop *outerLoop_ = nullptr;
     std::unordered_set<Loop *> innerLoops_;
     bool isReducible_ = true;
 

@@ -41,6 +41,10 @@ public:
     inline auto &GetLoops() const {
         return loops_;
     }
+
+    bool IsLoopHeader(BB *bb) const {
+        return bb->IsLoopHeader();
+    }
 };
 
 } // namespace IRGen

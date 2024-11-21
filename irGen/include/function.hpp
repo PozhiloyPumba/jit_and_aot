@@ -61,6 +61,7 @@ public:
     void DeletePreds(BB *bb);
     void DeleteSuccs(BB *bb);
     bool DominatedBy(BB *child, BB *parent) const;
+    BB *GetIDomFor(BB *bb) const;
     void dump() const;
     std::list<BB *> &GetAllBBs() {
         return BBs_;

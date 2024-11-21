@@ -74,6 +74,8 @@ public:
     void AddInstrForward(Instruction *instr);
     void AddInstrBackward(Instruction *instr);
     bool DominatedBy(BB *other);
+    BB *GetIDom();
+    bool IsLoopHeader() const;
     void dump() const;
 };
 

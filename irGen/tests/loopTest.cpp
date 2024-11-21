@@ -107,6 +107,15 @@ TEST(Loop_Test, ThirdSecondExample) {
     LoopAnalyzer l(g);
     l.BuildLoopTree();
 
+    ASSERT_TRUE(A->IsLoopHeader());
+    ASSERT_TRUE(B->IsLoopHeader());
+    ASSERT_FALSE(C->IsLoopHeader());
+    ASSERT_FALSE(D->IsLoopHeader());
+    ASSERT_FALSE(E->IsLoopHeader());
+    ASSERT_FALSE(F->IsLoopHeader());
+    ASSERT_FALSE(G->IsLoopHeader());
+    ASSERT_FALSE(H->IsLoopHeader());
+
     auto loops = l.GetLoops();
     ASSERT_EQ(loops.size(), 2);
 
@@ -154,6 +163,15 @@ TEST(Loop_Test, FirstExample) {
 
     LoopAnalyzer l(g);
     l.BuildLoopTree();
+
+    ASSERT_FALSE(A->IsLoopHeader());
+    ASSERT_FALSE(B->IsLoopHeader());
+    ASSERT_FALSE(C->IsLoopHeader());
+    ASSERT_FALSE(D->IsLoopHeader());
+    ASSERT_FALSE(E->IsLoopHeader());
+    ASSERT_FALSE(F->IsLoopHeader());
+    ASSERT_FALSE(G->IsLoopHeader());
+
     auto loops = l.GetLoops();
     ASSERT_EQ(loops.size(), 0);
 }
@@ -203,6 +221,18 @@ TEST(Loop_Test, SecondExample) {
     auto loopB = loops.at(B);
     auto loopC = loops.at(C);
     auto loopE = loops.at(E);
+    ASSERT_FALSE(A->IsLoopHeader());
+    ASSERT_TRUE(B->IsLoopHeader());
+    ASSERT_TRUE(C->IsLoopHeader());
+    ASSERT_FALSE(D->IsLoopHeader());
+    ASSERT_TRUE(E->IsLoopHeader());
+    ASSERT_FALSE(F->IsLoopHeader());
+    ASSERT_FALSE(G->IsLoopHeader());
+    ASSERT_FALSE(H->IsLoopHeader());
+    ASSERT_FALSE(I->IsLoopHeader());
+    ASSERT_FALSE(J->IsLoopHeader());
+    ASSERT_FALSE(K->IsLoopHeader());
+
     std::unordered_set<Loop *> empty;
     ASSERT_EQ(loopB->GetHeader(), B);
     ASSERT_EQ(loopB->GetLatches(), std::unordered_set({H}));

@@ -138,6 +138,16 @@ bool BB::DominatedBy(BB *other) {
     return graph_->DominatedBy(this, other);
 }
 
+BB *BB::GetIDom() {
+    return graph_->GetIDomFor(this);
+}
+
+bool BB::IsLoopHeader() const {
+    if (!loop_)
+        throw std::runtime_error("Null loop for bb in "s + CUR_FUNC_NAME);
+    return loop_->GetHeader() == this;
+}
+
 void BB::dump() const {
     auto *cur = beginBB_;
     if (!cur) {
