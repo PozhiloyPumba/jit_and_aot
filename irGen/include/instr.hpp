@@ -3,9 +3,11 @@
 
 #include "helpers/defines.hpp"
 #include "instrTypes.hpp"
+#include "liveRange.hpp"
 #include "opcodes.hpp"
 #include <cstdint>
 #include <string>
+#include <vector>
 
 namespace IRGen {
 class BB;
@@ -15,6 +17,12 @@ protected:
     Opcode opcode_;
     InstrType instrType_;
     uint64_t instrId_;
+
+    uint64_t linearNumber_{0};
+    uint64_t liveNumber_{0};
+
+    LiveRange live_;
+    std::vector<Instruction *> preds_;
 
 private:
     Instruction *prev_;
@@ -59,6 +67,10 @@ public:
         return instrType_;
     }
 
+    CONST_AND_NON_CONST_GETTER(GetLiveNumber, liveNumber_);
+    CONST_AND_NON_CONST_GETTER(GetLinearNumber, linearNumber_);
+    CONST_AND_NON_CONST_GETTER(GetLiveRange, live_);
+
     inline void SetPrevInstr(Instruction *instr) {
         prev_ = instr;
     }
@@ -72,6 +84,10 @@ public:
         instrId_ = id;
     }
 
+    bool IsPhiInstr() const {
+        return opcode_ == Opcode::PHI;
+    }
+
     void Euthanasia();
     // I am anchor
     void InsertBefore(Instruction *toInsert);
@@ -79,6 +95,10 @@ public:
     void InsertAfter(Instruction *toInsert);
 
     bool DominatedBy(Instruction *other);
+
+    inline const std::vector<Instruction *> &GetInputs() {
+        return preds_;
+    }
 
     virtual std::string toString() const {
         return IRGen::toString(opcode_) + std::string(".") + IRGen::toString(instrType_);

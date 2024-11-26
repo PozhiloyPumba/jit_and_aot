@@ -49,10 +49,10 @@ int main() {
         b3->AddInstrBackward(valAdd);
         b3->AddInstrBackward(builder.BuildJump(b2));
         b4->AddInstrBackward(builder.BuildRet(InstrType::U64, phi2));
-        phi1->SetIncoming(b1, val2);
-        phi1->SetIncoming(b3, valAdd);
-        phi2->SetIncoming(b3, valMul);
-        phi2->SetIncoming(b1, val1);
+        phi1->SetIncoming(val2);
+        phi1->SetIncoming(valAdd);
+        phi2->SetIncoming(valMul);
+        phi2->SetIncoming(val1);
         g->dump();
     } catch (const std::exception &e) {
         std::cerr << "Exception: " << e.what() << std::endl;

@@ -94,3 +94,90 @@ TEST(Liveness_Analysis_Test, LinOrderTestSecond) {
 
     ASSERT_EQ(order, std::vector<BB *>({A, B, D, C, F, G, H, E}));
 }
+
+TEST(Liveness_Analysis_Test, LivenessTestFirst) {
+    using namespace IRGen;
+
+    InstructionBuilder builder;
+    IRGenerator gen;
+
+    Function *g = gen.CreateFunction("test", InstrType::VOID, {});
+
+    BB *b1 = gen.CreateEmptyBB(g);
+    BB *b2 = gen.CreateEmptyBB(g);
+    BB *b3 = gen.CreateEmptyBB(g);
+    BB *b4 = gen.CreateEmptyBB(g);
+
+    g->AddBBAsSucc(b2, b1, true);
+    g->AddBBAsSucc(b2, b3, true);
+    g->AddBBAsSucc(b3, b2, true);
+    g->AddBBAsSucc(b4, b2, false);
+
+    auto *val1 = builder.BuildMovI(uint64_t(1));
+    auto *val2 = builder.BuildMovI(uint64_t(2));
+    auto *val3 = builder.BuildMovI(uint64_t(10));
+    b1->AddInstrBackward(val1);
+    b1->AddInstrBackward(val2);
+    b1->AddInstrBackward(val3);
+
+    auto *phi1 = builder.BuildPhi(InstrType::U64);
+    auto *phi2 = builder.BuildPhi(InstrType::U64);
+    auto *valCmp = builder.BuildCmp(InstrType::U64, phi1, val2);
+    auto *jumpInstr = builder.BuildJa(b4, valCmp, b3);
+    b2->AddInstrBackward(phi1);
+    b2->AddInstrBackward(phi2);
+    b2->AddInstrBackward(valCmp);
+    b2->AddInstrBackward(jumpInstr);
+
+    auto *valMul = builder.BuildMul(InstrType::U64, val1, val1);
+    auto *valAdd = builder.BuildAddI(valMul, uint64_t(1));
+    auto *valJump = builder.BuildJump(b2);
+    b3->AddInstrBackward(valMul);
+    b3->AddInstrBackward(valAdd);
+    b3->AddInstrBackward(valJump);
+
+    auto retInstr = builder.BuildRet(InstrType::U64, phi2);
+    b4->AddInstrBackward(retInstr);
+
+    phi1->SetIncoming(val2);
+    phi1->SetIncoming(valAdd);
+    phi2->SetIncoming(valMul);
+    phi2->SetIncoming(val1);
+
+    g->SetFirstBB(b1);
+    auto l = LivenessAnalysis(g);
+
+    l.run();
+
+    ASSERT_EQ(val1->GetLinearNumber(), 0);
+    ASSERT_EQ(val1->GetLiveNumber(), 2);
+    ASSERT_EQ(val2->GetLinearNumber(), 1);
+    ASSERT_EQ(val2->GetLiveNumber(), 4);
+    ASSERT_EQ(val3->GetLinearNumber(), 2);
+    ASSERT_EQ(val3->GetLiveNumber(), 6);
+
+    ASSERT_EQ(phi1->GetLinearNumber(), 3);
+    ASSERT_EQ(phi1->GetLiveNumber(), 8);
+    ASSERT_EQ(phi2->GetLinearNumber(), 4);
+    ASSERT_EQ(phi2->GetLiveNumber(), 8);
+    ASSERT_EQ(valCmp->GetLinearNumber(), 5);
+    ASSERT_EQ(valCmp->GetLiveNumber(), 10);
+    ASSERT_EQ(jumpInstr->GetLinearNumber(), 6);
+    ASSERT_EQ(jumpInstr->GetLiveNumber(), 12);
+
+    ASSERT_EQ(valMul->GetLinearNumber(), 7);
+    ASSERT_EQ(valMul->GetLiveNumber(), 16);
+    ASSERT_EQ(valAdd->GetLinearNumber(), 8);
+    ASSERT_EQ(valAdd->GetLiveNumber(), 18);
+    ASSERT_EQ(valJump->GetLinearNumber(), 9);
+    ASSERT_EQ(valJump->GetLiveNumber(), 20);
+
+    ASSERT_EQ(retInstr->GetLinearNumber(), 10);
+    ASSERT_EQ(retInstr->GetLiveNumber(), 24);
+
+    [[maybe_unused]] auto print = [](auto *instr) {
+        std::cout << instr->GetLiveRange().start << " " << instr->GetLiveRange().end << std::endl;
+    };
+
+    ASSERT_EQ(val1->GetLiveRange(), LiveRange(0, 22));
+}

@@ -3,6 +3,7 @@
 
 #include "helpers/defines.hpp"
 #include "instr.hpp"
+#include "liveRange.hpp"
 #include "loop.hpp"
 #include <array>
 #include <cstdint>
@@ -29,6 +30,7 @@ private:
     }
 
     Loop *loop_ = nullptr;
+    LiveRange liveRange_;
 
 public:
     BB(bool setId = true) : beginBB_(nullptr), endBB_(nullptr), graph_(nullptr) {
@@ -56,6 +58,7 @@ public:
     CONST_AND_NON_CONST_GETTER(GetEndBB, endBB_);
     CONST_AND_NON_CONST_GETTER(GetFunction, graph_);
     CONST_AND_NON_CONST_GETTER(GetLoop, loop_);
+    CONST_AND_NON_CONST_GETTER(GetLiveRange, liveRange_);
 
     inline void SetId(uint64_t id) {
         bbId_ = id;

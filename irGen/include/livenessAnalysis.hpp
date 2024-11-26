@@ -5,6 +5,7 @@
 #include "function.hpp"
 #include "loopAnalyzer.hpp"
 #include <cassert>
+#include <iostream>
 #include <stack>
 #include <vector>
 
@@ -26,10 +27,13 @@ public:
     LivenessAnalysis(Function *graph) : graph_(graph), loopTree_(graph) {
         assert(graph_);
         graph_->buildDominatorTree();
+
         loopTree_.BuildLoopTree();
     }
 
     std::vector<BB *> CreateLinearOrder() const;
+
+    void run();
 };
 
 } // namespace IRGen

@@ -59,8 +59,6 @@ std::vector<BB *> LivenessAnalysis::SCC(const Loop *curLoop) const {
 std::vector<BB *> LivenessAnalysis::CreateLinearOrder() const {
     std::unordered_set<BB *> markers_;
 
-    auto *begin = graph_->GetFirstBB();
-
     std::vector<BB *> linOrder; // result
 
     bool findIrr = false;
@@ -104,6 +102,84 @@ std::vector<BB *> LivenessAnalysis::CreateLinearOrder() const {
 
     addCycle(loopTree_.GetRootLoop());
     return findIrr ? std::vector<BB *>() : linOrder;
+}
+
+void LivenessAnalysis::run() {
+    auto order = CreateLinearOrder();
+
+    // set linear and live numbers
+
+    uint64_t liveNumber = 0;
+    uint64_t linearNumber = 0;
+    for (auto bb : order) {
+        bb->GetLiveRange().start = liveNumber;
+        for (auto curIt = bb->GetBeginBB(), endIt = bb->GetEndBB()->GetNextInstr(); curIt != endIt;
+             curIt = curIt->GetNextInstr()) {
+            curIt->GetLinearNumber() = linearNumber++;
+            liveNumber = curIt->IsPhiInstr() ? liveNumber : liveNumber + 2;
+            curIt->GetLiveNumber() = liveNumber;
+        }
+        liveNumber += 2;
+        bb->GetLiveRange().end = liveNumber;
+    }
+
+    std::unordered_map<BB *, std::unordered_set<Instruction *>> bbLiveSets;
+    using namespace std::ranges;
+    for (auto *bb : order | views::reverse) {
+        auto &liveIn = bbLiveSets[bb];
+        LiveRange &bbLiveRange = bb->GetLiveRange();
+
+        for (auto *succ : bb->GetSuccs()) {
+            if (!succ)
+                continue;
+
+            auto succIt = bbLiveSets.find(succ);
+            if (succIt != bbLiveSets.end()) {
+                auto succLiveset = succIt->second;
+                std::copy(succLiveset.begin(), succLiveset.end(), std::inserter(liveIn, liveIn.end()));
+            }
+            auto *curInstr = succ->GetBeginBB();
+            while (curInstr && curInstr->IsPhiInstr()) {
+                liveIn.insert(curInstr);
+                curInstr = curInstr->GetNextInstr();
+            }
+        }
+
+        for (auto *op : liveIn) {
+            op->GetLiveRange() += bb->GetLiveRange();
+        }
+
+        for (auto curIt = bb->GetEndBB(), endIt = bb->GetBeginBB()->GetPrevInstr(); curIt != endIt;
+             curIt = curIt->GetPrevInstr()) {
+            if (curIt->IsPhiInstr())
+                break;
+
+            auto &instrLI = curIt->GetLiveRange();
+            instrLI += LiveRange(curIt->GetLiveNumber(), curIt->GetLiveNumber() + 2);
+            liveIn.erase(curIt);
+
+            for (auto *inp : curIt->GetInputs()) {
+                inp->GetLiveRange() += LiveRange(bbLiveRange.start, curIt->GetLiveNumber());
+                liveIn.insert(inp);
+            }
+        }
+
+        auto *curInstr = bb->GetBeginBB();
+        while (curInstr && curInstr->IsPhiInstr()) {
+            liveIn.erase(curInstr);
+            curInstr = curInstr->GetNextInstr();
+        }
+
+        if (bb->IsLoopHeader()) {
+            LiveRange loopLR = bb->GetLiveRange();
+
+            for (auto &latch : bb->GetLoop()->GetLatches())
+                loopLR.end = std::max(loopLR.end, latch->GetLiveRange().end);
+
+            for (auto &instr : liveIn)
+                instr->GetLiveRange() += loopLR;
+        }
+    }
 }
 
 } // namespace IRGen
