@@ -45,6 +45,16 @@ public:
     bool IsLoopHeader(BB *bb) const {
         return bb->IsLoopHeader();
     }
+
+    bool IsInnerLoopOf(const Loop *cur, const Loop *parent) const {
+        auto *tmp = cur->GetOuterLoop();
+        while (tmp != nullptr) {
+            if (tmp == parent)
+                return true;
+            tmp = tmp->GetOuterLoop();
+        }
+        return false;
+    }
 };
 
 } // namespace IRGen

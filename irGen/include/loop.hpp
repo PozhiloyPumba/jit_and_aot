@@ -46,6 +46,19 @@ public:
     inline void RemoveInnerLoop(Loop *l) {
         innerLoops_.erase(l);
     }
+
+    inline bool ContainsInSubloops(BB *bb) const {
+        bool res = body_.contains(bb);
+        if (res)
+            return true;
+
+        for (auto &l : innerLoops_) {
+            res = l->ContainsInSubloops(bb);
+            if (res)
+                return true;
+        }
+        return false;
+    }
 };
 
 } // namespace IRGen

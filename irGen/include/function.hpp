@@ -63,7 +63,7 @@ public:
     bool DominatedBy(BB *child, BB *parent) const;
     BB *GetIDomFor(BB *bb) const;
     void dump() const;
-    std::list<BB *> &GetAllBBs() {
+    auto &GetAllBBs() const {
         return BBs_;
     }
     std::unordered_map<BB *, std::unordered_set<BB *>> &buildDominatorTree();

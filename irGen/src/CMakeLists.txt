@@ -4,8 +4,9 @@ set(SOURCES
     function.cpp
 	IRBuilder.cpp
     loopAnalyzer.cpp
+    livenessAnalysis.cpp
 )
-
+    
 add_library(ir_gen ${SOURCES})
 
 add_executable(main main.cpp)

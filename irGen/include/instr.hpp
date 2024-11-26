@@ -78,6 +78,8 @@ public:
     // I am anchor
     void InsertAfter(Instruction *toInsert);
 
+    bool DominatedBy(Instruction *other);
+
     virtual std::string toString() const {
         return IRGen::toString(opcode_) + std::string(".") + IRGen::toString(instrType_);
     };

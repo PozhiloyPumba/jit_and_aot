@@ -28,4 +28,21 @@ void Instruction::InsertAfter(Instruction *toInsert) {
     parentBB_->InsertInstrAfter(toInsert, this);
 }
 
+bool Instruction::DominatedBy(Instruction *other) {
+    if (!other)
+        throw std::runtime_error("Null instr in "s + CUR_FUNC_NAME);
+
+    if (parentBB_ == other->GetBB()) {
+        auto *curInstr = parentBB_->GetBeginBB();
+        while (curInstr != this) {
+            if (curInstr == other)
+                return true;
+            curInstr = curInstr->next_;
+        }
+        return false;
+    } else {
+        return parentBB_->DominatedBy(other->GetBB());
+    }
+}
+
 } // namespace IRGen
