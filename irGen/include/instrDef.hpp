@@ -36,11 +36,16 @@ public:
 class OneValInstr : public Instruction {
 public:
     OneValInstr(Opcode op, InstrType type, Instruction *val, bool setId = true) : Instruction(op, type, setId) {
+        if (op == Opcode::RET && !val)
+            return;
+
         assert(val);
         preds_.push_back(val);
     }
 
     inline std::string toString() const override {
+        if (opcode_ == Opcode::RET && preds_.empty())
+            return Instruction::toString();
         return Instruction::toString() + " @" + std::to_string(preds_[0]->GetId());
     }
 };

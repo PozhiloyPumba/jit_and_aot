@@ -8,6 +8,7 @@ namespace IRGen {
 // clang-format off
 #define ENUM_OPCODES(c) \
     c(MUL)              \
+    c(ADD)              \
     c(ADDI)             \
     c(MOVI)             \
     c(CMP)              \

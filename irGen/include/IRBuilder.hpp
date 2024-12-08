@@ -62,6 +62,12 @@ public:
         return inst;
     }
 
+    TwoValInstr *BuildAdd(InstrType type, Instruction *first, Instruction *second) {
+        auto *inst = new TwoValInstr(Opcode::ADD, type, first, second);
+        instructions_.push_back(inst);
+        return inst;
+    }
+
     template <typename T> ValAndImmInstr<T> *BuildAddI(Instruction *val, T imm) {
         auto *inst = new ValAndImmInstr(Opcode::ADDI, GetInstrType<T>(), val, imm);
         instructions_.push_back(inst);

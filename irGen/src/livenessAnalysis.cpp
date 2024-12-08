@@ -140,7 +140,11 @@ void LivenessAnalysis::run() {
             }
             auto *curInstr = succ->GetBeginBB();
             while (curInstr && curInstr->IsPhiInstr()) {
-                liveIn.insert(curInstr);
+                auto &inputs = curInstr->GetInputs();
+                auto check = std::find_if(inputs.begin(), inputs.end(), [&bb](auto *instr) { return instr->GetBB() == bb; });
+                if (check != inputs.end())
+                    liveIn.insert(*check);
+
                 curInstr = curInstr->GetNextInstr();
             }
         }
@@ -155,7 +159,10 @@ void LivenessAnalysis::run() {
                 break;
 
             auto &instrLI = curIt->GetLiveRange();
-            instrLI += LiveRange(curIt->GetLiveNumber(), curIt->GetLiveNumber() + 2);
+            instrLI.start = curIt->GetLiveNumber();
+            if (!instrLI.isValid()) {
+                instrLI.end = instrLI.start + 2;
+            }
             liveIn.erase(curIt);
 
             for (auto *inp : curIt->GetInputs()) {
