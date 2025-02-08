@@ -9,6 +9,15 @@ set(SOURCES
     
 add_library(ir_gen ${SOURCES})
 
-add_executable(main main.cpp)
+set(EXEC main)
+add_executable(${EXEC} main.cpp)
+target_link_libraries(${EXEC} PUBLIC ir_gen)
 
-target_link_libraries(main PUBLIC ir_gen)
+set_target_properties(${EXEC} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/$<0:>)
+
+add_custom_target(run_main
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${EXEC}$<IF:${WIN32},.exe,>
+)
+
+add_dependencies(run_main ${EXEC})
