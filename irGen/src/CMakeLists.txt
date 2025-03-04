@@ -6,6 +6,7 @@ set(SOURCES
     loopAnalyzer.cpp
     livenessAnalysis.cpp
     passes/peepholePass.cpp
+    passes/constantFoldingPass.cpp
 )
 
 add_library(ir_gen ${SOURCES})

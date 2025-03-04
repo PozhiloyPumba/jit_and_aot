@@ -31,6 +31,9 @@ public:
     inline std::string toString() const override {
         return Instruction::toString() + " @" + std::to_string(instrId_) + " " + IRGen::toString(instrType_, imm_);
     }
+    const ImmType &GetImm() const {
+        return imm_;
+    }
 };
 
 class OneValInstr : public Instruction {

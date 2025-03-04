@@ -17,6 +17,7 @@ set(TEST_SOURCES
 	loopTest.cpp
 	livenessAnalysis.cpp
 	peepholePassTest.cpp
+	constantFoldingPassTest.cpp
 )
 
 set(TEST_EXE test)

@@ -52,11 +52,11 @@ Instruction *PeepHolePass::SubPeephole(TwoValInstr *instr) const {
     if (inputs[0] == inputs[1]) { // sub x, x -> movi 0
         auto *subs = builder.BuildMovI(IRGen::CreateImm(instr->GetType(), 0));
         auto *bb = instr->GetBB();
-        bb->ReplaceInstr(instr, {subs});
         for (auto &user : instr->GetUsers()) {
-            auto &inputs = user->GetInputs();
+			auto &inputs = user->GetInputs();
             std::replace(inputs.begin(), inputs.end(), static_cast<Instruction *>(instr), static_cast<Instruction *>(subs));
         }
+		bb->ReplaceInstr(instr, {subs});
         return subs;
     }
     return instr->GetNextInstr();
@@ -117,12 +117,12 @@ Instruction *PeepHolePass::SubIPeephole(ValAndImmInstr *instr) const {
                 auto *target = inputs[0];
                 auto *subs = builder.BuildDec(instr->GetType(), target);
                 auto *bb = instr->GetBB();
-                bb->ReplaceInstr(instr, {subs});
                 for (auto &user : instr->GetUsers()) {
-                    auto &inputs = user->GetInputs();
+					auto &inputs = user->GetInputs();
                     std::replace(inputs.begin(), inputs.end(), static_cast<Instruction *>(instr),
-                                 static_cast<Instruction *>(subs));
+					static_cast<Instruction *>(subs));
                 }
+				bb->ReplaceInstr(instr, {subs});
                 next = subs;
             }
         },
@@ -160,12 +160,12 @@ Instruction *PeepHolePass::ShrIPeephole(ValAndImmInstr *instr) const {
                 auto *subs = builder.BuildMovI(IRGen::CreateImm(instr->GetType(), 0));
                 auto *bb = instr->GetBB();
                 next = instr->GetNextInstr();
-                bb->ReplaceInstr(instr, {subs});
                 for (auto &user : instr->GetUsers()) {
-                    auto &inputs = user->GetInputs();
+					auto &inputs = user->GetInputs();
                     std::replace(inputs.begin(), inputs.end(), static_cast<Instruction *>(instr),
-                                 static_cast<Instruction *>(subs));
+					static_cast<Instruction *>(subs));
                 }
+				bb->ReplaceInstr(instr, {subs});
                 return;
             }
 
@@ -179,12 +179,12 @@ Instruction *PeepHolePass::ShrIPeephole(ValAndImmInstr *instr) const {
                     IRGen::CreateImm(instr->GetType(), std::numeric_limits<T>::max() - ((static_cast<T>(1) << imm) - 1)));
                 auto *bb = instr->GetBB();
                 next = instr->GetNextInstr();
-                bb->ReplaceInstr(instr, {subs});
                 for (auto &user : instr->GetUsers()) {
-                    auto &inputs = user->GetInputs();
+					auto &inputs = user->GetInputs();
                     std::replace(inputs.begin(), inputs.end(), static_cast<Instruction *>(instr),
-                                 static_cast<Instruction *>(subs));
+					static_cast<Instruction *>(subs));
                 }
+				bb->ReplaceInstr(instr, {subs});
                 bb->AssasinateInstr(tmp);
                 return;
             }
@@ -210,12 +210,12 @@ Instruction *PeepHolePass::AndIPeephole(ValAndImmInstr *instr) const {
                 auto *subs = builder.BuildMovI(IRGen::CreateImm(instr->GetType(), 0));
                 auto *bb = instr->GetBB();
                 next = instr->GetNextInstr();
-                bb->ReplaceInstr(instr, {subs});
                 for (auto &user : instr->GetUsers()) {
-                    auto &inputs = user->GetInputs();
+					auto &inputs = user->GetInputs();
                     std::replace(inputs.begin(), inputs.end(), static_cast<Instruction *>(instr),
-                                 static_cast<Instruction *>(subs));
+					static_cast<Instruction *>(subs));
                 }
+				bb->ReplaceInstr(instr, {subs});
                 return;
             }
 

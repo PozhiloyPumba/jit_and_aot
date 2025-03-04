@@ -3,7 +3,6 @@
 
 #include "instrDef.hpp"
 #include "pass.hpp"
-#include <string_view>
 
 namespace IRGen {
 class PeepHolePass : public Pass {

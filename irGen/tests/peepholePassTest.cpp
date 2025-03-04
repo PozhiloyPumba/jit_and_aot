@@ -1,7 +1,7 @@
 #include "IRBuilder.hpp"
 #include "function.hpp"
+#include "passes/peepholePass.hpp"
 #include <gtest/gtest.h>
-#include <passes/peepholePass.hpp>
 
 TEST(PeepholePassTest, sub_test) {
     using namespace IRGen;

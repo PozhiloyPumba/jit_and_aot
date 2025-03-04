@@ -17,12 +17,12 @@ namespace IRGen {
     c(SHRI)             \
     c(SHLI)             \
     c(ANDI)             \
+    c(DEC)              \
     c(MOVI)             \
     c(CMP)              \
     c(JA)               \
     c(JMP)              \
     c(RET)              \
-    c(DEC)              \
     c(CAST)             \
     c(PHI)              \
     c(PARAM)            \
@@ -30,6 +30,14 @@ namespace IRGen {
 // clang-format on
 
 CREATE_ENUM(Opcode, ENUM_OPCODES);
+
+constexpr static inline bool IsArithmetic(Opcode op) {
+	return static_cast<int>(op) <= static_cast<int>(Opcode::DEC);
+}
+
+constexpr static inline bool IsTwoValArithmetic(Opcode op) {
+	return static_cast<int>(op) <= static_cast<int>(Opcode::AND);
+}
 
 } // namespace IRGen
 
