@@ -8,28 +8,37 @@
 namespace IRGen {
 
 class IRGenerator {
-public:
     IRGenerator() {}
+    std::vector<BB *> BBs_;
+    std::vector<Function *> graph_;
+
+public:
+    static IRGenerator &GetInstance() {
+        static IRGenerator instance;
+        return instance;
+    }
+
+    NO_COPY_NO_MOVE(IRGenerator);
     ~IRGenerator() {
         Clear();
     }
 
-public:
     Function *CreateFunction(const std::string &name, InstrType retType, const std::vector<ParameterInstr *> &params);
     BB *CreateEmptyBB(Function *);
     void Clear();
-
-private:
-    std::vector<BB *> BBs_;
-    std::vector<Function *> graph_;
 };
 
 class InstructionBuilder final {
 private:
     std::vector<Instruction *> instructions_;
+    InstructionBuilder() = default;
 
 public:
-    InstructionBuilder() = default;
+    static InstructionBuilder &GetInstance() {
+        static InstructionBuilder instance;
+        return instance;
+    }
+
     NO_COPY_NO_MOVE(InstructionBuilder);
 
     ~InstructionBuilder() {
@@ -50,8 +59,8 @@ public:
         instructions_.clear();
     }
 
-    template <typename T> ImmToValInstr<T> *BuildMovI(T imm) {
-        auto *inst = new ImmToValInstr(Opcode::MOVI, GetInstrType<T>(), imm);
+    ImmToValInstr *BuildMovI(ImmType imm) {
+        auto *inst = new ImmToValInstr(Opcode::MOVI, GetEnumFromVariant(imm), imm);
         instructions_.push_back(inst);
         return inst;
     }
@@ -68,8 +77,50 @@ public:
         return inst;
     }
 
-    template <typename T> ValAndImmInstr<T> *BuildAddI(Instruction *val, T imm) {
-        auto *inst = new ValAndImmInstr(Opcode::ADDI, GetInstrType<T>(), val, imm);
+    TwoValInstr *BuildSub(InstrType type, Instruction *first, Instruction *second) {
+        auto *inst = new TwoValInstr(Opcode::SUB, type, first, second);
+        instructions_.push_back(inst);
+        return inst;
+    }
+
+    TwoValInstr *BuildShr(InstrType type, Instruction *first, Instruction *second) {
+        auto *inst = new TwoValInstr(Opcode::SHR, type, first, second);
+        instructions_.push_back(inst);
+        return inst;
+    }
+
+    TwoValInstr *BuildAnd(InstrType type, Instruction *first, Instruction *second) {
+        auto *inst = new TwoValInstr(Opcode::AND, type, first, second);
+        instructions_.push_back(inst);
+        return inst;
+    }
+
+    ValAndImmInstr *BuildAddI(Instruction *val, ImmType imm) {
+        auto *inst = new ValAndImmInstr(Opcode::ADDI, GetEnumFromVariant(imm), val, imm);
+        instructions_.push_back(inst);
+        return inst;
+    }
+
+    ValAndImmInstr *BuildSubI(Instruction *val, ImmType imm) {
+        auto *inst = new ValAndImmInstr(Opcode::SUBI, GetEnumFromVariant(imm), val, imm);
+        instructions_.push_back(inst);
+        return inst;
+    }
+
+    ValAndImmInstr *BuildAndI(Instruction *val, ImmType imm) {
+        auto *inst = new ValAndImmInstr(Opcode::ANDI, GetEnumFromVariant(imm), val, imm);
+        instructions_.push_back(inst);
+        return inst;
+    }
+
+    ValAndImmInstr *BuildShrI(Instruction *val, ImmType imm) {
+        auto *inst = new ValAndImmInstr(Opcode::SHRI, GetEnumFromVariant(imm), val, imm);
+        instructions_.push_back(inst);
+        return inst;
+    }
+
+    ValAndImmInstr *BuildShlI(Instruction *val, ImmType imm) {
+        auto *inst = new ValAndImmInstr(Opcode::SHLI, GetEnumFromVariant(imm), val, imm);
         instructions_.push_back(inst);
         return inst;
     }
@@ -93,6 +144,12 @@ public:
     }
     OneValInstr *BuildRet(InstrType type, Instruction *val) {
         auto *inst = new OneValInstr(Opcode::RET, type, val);
+        instructions_.push_back(inst);
+        return inst;
+    }
+
+    OneValInstr *BuildDec(InstrType type, Instruction *val) {
+        auto *inst = new OneValInstr(Opcode::DEC, type, val);
         instructions_.push_back(inst);
         return inst;
     }

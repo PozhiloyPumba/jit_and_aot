@@ -8,8 +8,8 @@
 int main() {
     using namespace IRGen;
     try {
-        InstructionBuilder builder;
-        IRGenerator gen;
+        auto &builder = InstructionBuilder::GetInstance();
+        auto &gen = IRGenerator::GetInstance();
 
         std::vector<InstrType> paramTypes{InstrType::U32};
         std::vector<ParameterInstr *> params;

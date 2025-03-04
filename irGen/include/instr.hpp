@@ -7,6 +7,7 @@
 #include "opcodes.hpp"
 #include <cstdint>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 namespace IRGen {
@@ -23,6 +24,7 @@ protected:
 
     LiveRange live_;
     std::vector<Instruction *> preds_;
+    std::unordered_set<Instruction *> users_; // users of this instruction
 
 private:
     Instruction *prev_;
@@ -70,6 +72,16 @@ public:
     CONST_AND_NON_CONST_GETTER(GetLiveNumber, liveNumber_);
     CONST_AND_NON_CONST_GETTER(GetLinearNumber, linearNumber_);
     CONST_AND_NON_CONST_GETTER(GetLiveRange, live_);
+    CONST_AND_NON_CONST_GETTER(GetInputs, preds_);
+    CONST_AND_NON_CONST_GETTER(GetUsers, users_);
+
+    inline void AddUser(Instruction *instr) {
+        users_.insert(instr);
+    }
+
+    inline void RemoveUser(Instruction *instr) {
+        users_.erase(instr);
+    }
 
     inline void SetPrevInstr(Instruction *instr) {
         prev_ = instr;
@@ -95,10 +107,6 @@ public:
     void InsertAfter(Instruction *toInsert);
 
     bool DominatedBy(Instruction *other);
-
-    inline const std::vector<Instruction *> &GetInputs() {
-        return preds_;
-    }
 
     virtual std::string toString() const {
         return IRGen::toString(opcode_) + std::string(".") + IRGen::toString(instrType_);

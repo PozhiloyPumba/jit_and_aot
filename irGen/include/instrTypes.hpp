@@ -3,7 +3,9 @@
 
 #include "helpers/genEnum.hpp"
 #include <cstdint>
+#include <string>
 #include <type_traits>
+#include <variant>
 
 namespace IRGen {
 
@@ -23,51 +25,55 @@ namespace IRGen {
 
 CREATE_ENUM(InstrType, ENUM_TYPE_INSTR);
 
-namespace {
+using ImmType = std::variant<int8_t, int16_t, int32_t, int64_t, uint8_t, uint16_t, uint32_t, uint64_t>;
 
-template <int SZ> [[maybe_unused]] InstrType GetInstrTypeUnsigned() {
-    return InstrType::ERROR;
-}
-
-template <> [[maybe_unused]] InstrType GetInstrTypeUnsigned<1>() {
-    return InstrType::U8;
-}
-template <> [[maybe_unused]] InstrType GetInstrTypeUnsigned<2>() {
-    return InstrType::U16;
-}
-template <> [[maybe_unused]] InstrType GetInstrTypeUnsigned<4>() {
-    return InstrType::U32;
-}
-template <> [[maybe_unused]] InstrType GetInstrTypeUnsigned<8>() {
-    return InstrType::U64;
-}
-
-template <int SZ> [[maybe_unused]] InstrType GetInstrTypeSigned() {
-    return InstrType::ERROR;
-}
-
-template <> [[maybe_unused]] InstrType GetInstrTypeSigned<1>() {
-    return InstrType::I8;
-}
-template <> [[maybe_unused]] InstrType GetInstrTypeSigned<2>() {
-    return InstrType::I16;
-}
-template <> [[maybe_unused]] InstrType GetInstrTypeSigned<4>() {
-    return InstrType::I32;
-}
-template <> [[maybe_unused]] InstrType GetInstrTypeSigned<8>() {
-    return InstrType::I64;
+constexpr static inline ImmType CreateImm(InstrType type, std::integral auto imm) {
+    switch (type) {
+    case InstrType::I8:
+        return static_cast<int8_t>(imm);
+    case InstrType::I16:
+        return static_cast<int16_t>(imm);
+    case InstrType::I32:
+        return static_cast<int32_t>(imm);
+    case InstrType::I64:
+        return static_cast<int64_t>(imm);
+    case InstrType::U8:
+        return static_cast<uint8_t>(imm);
+    case InstrType::U16:
+        return static_cast<uint16_t>(imm);
+    case InstrType::U32:
+        return static_cast<uint32_t>(imm);
+    case InstrType::U64:
+        return static_cast<uint64_t>(imm);
+    }
+    return ImmType();
 }
 
-template <typename T> [[maybe_unused]] InstrType GetInstrType() {
-    static_assert(std::is_integral_v<T> == true);
-    if constexpr (std::is_unsigned_v<T>)
-        return GetInstrTypeUnsigned<sizeof(T)>();
-    else
-        return GetInstrTypeSigned<sizeof(T)>();
+constexpr static inline InstrType GetEnumFromVariant(ImmType imm) {
+	return InstrType(imm.index());
 }
 
-} // namespace
+constexpr static inline std::string toString(InstrType type, ImmType imm) {
+    switch (type) {
+    case InstrType::I8:
+        return std::to_string(std::get<int8_t>(imm));
+    case InstrType::I16:
+        return std::to_string(std::get<int16_t>(imm));
+    case InstrType::I32:
+        return std::to_string(std::get<int32_t>(imm));
+    case InstrType::I64:
+        return std::to_string(std::get<int64_t>(imm));
+    case InstrType::U8:
+        return std::to_string(std::get<uint8_t>(imm));
+    case InstrType::U16:
+        return std::to_string(std::get<uint16_t>(imm));
+    case InstrType::U32:
+        return std::to_string(std::get<uint32_t>(imm));
+    case InstrType::U64:
+        return std::to_string(std::get<uint64_t>(imm));
+    }
+    return "Something went wrong oops....";
+}
 
 } // namespace IRGen
 

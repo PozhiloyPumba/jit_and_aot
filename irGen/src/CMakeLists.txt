@@ -5,8 +5,9 @@ set(SOURCES
 	IRBuilder.cpp
     loopAnalyzer.cpp
     livenessAnalysis.cpp
+    passes/peepholePass.cpp
 )
-    
+
 add_library(ir_gen ${SOURCES})
 
 set(EXEC main)

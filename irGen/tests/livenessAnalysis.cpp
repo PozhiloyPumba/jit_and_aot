@@ -6,8 +6,8 @@
 TEST(LinOrder_Test, LinOrderTestFirst) {
     using namespace IRGen;
 
-    InstructionBuilder builder;
-    IRGenerator gen;
+    auto &builder = InstructionBuilder::GetInstance();
+    auto &gen = IRGenerator::GetInstance();
 
     Function *g = gen.CreateFunction("test", InstrType::VOID, {});
 
@@ -61,8 +61,8 @@ TEST(LinOrder_Test, LinOrderTestFirst) {
 TEST(LinOrder_Test, LinOrderTestSecond) {
     using namespace IRGen;
 
-    InstructionBuilder builder;
-    IRGenerator gen;
+    auto &builder = InstructionBuilder::GetInstance();
+    auto &gen = IRGenerator::GetInstance();
 
     Function *g = gen.CreateFunction("test", InstrType::VOID, {});
 
@@ -99,8 +99,8 @@ TEST(LinOrder_Test, LinOrderTestSecond) {
 TEST(Liveness_Analysis_Test, LivenessTestLecture_1) {
     using namespace IRGen;
 
-    InstructionBuilder builder;
-    IRGenerator gen;
+    auto &builder = InstructionBuilder::GetInstance();
+    auto &gen = IRGenerator::GetInstance();
 
     Function *g = gen.CreateFunction("test", InstrType::VOID, {});
 
@@ -195,8 +195,8 @@ TEST(Liveness_Analysis_Test, LivenessTestLecture_1) {
 TEST(Liveness_Analysis_Test, LivenessTestLecture_2) {
     using namespace IRGen;
 
-    InstructionBuilder builder{};
-    IRGenerator gen{};
+    auto &builder = InstructionBuilder::GetInstance();
+    auto &gen = IRGenerator::GetInstance();
 
     std::vector<InstrType> paramTypes{InstrType::U64, InstrType::U64};
     std::vector<ParameterInstr *> params;
@@ -312,8 +312,8 @@ TEST(Liveness_Analysis_Test, LivenessTestLecture_2) {
 TEST(Liveness_Analysis_Test, LivenessTest3) {
     using namespace IRGen;
 
-    InstructionBuilder builder;
-    IRGenerator gen;
+    auto &builder = InstructionBuilder::GetInstance();
+    auto &gen = IRGenerator::GetInstance();
 
     Function *g = gen.CreateFunction("test", InstrType::VOID, {});
 

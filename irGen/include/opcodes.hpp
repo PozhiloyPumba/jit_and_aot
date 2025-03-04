@@ -9,12 +9,20 @@ namespace IRGen {
 #define ENUM_OPCODES(c) \
     c(MUL)              \
     c(ADD)              \
+    c(SUB)              \
+    c(SHR)              \
+    c(AND)              \
     c(ADDI)             \
+    c(SUBI)             \
+    c(SHRI)             \
+    c(SHLI)             \
+    c(ANDI)             \
     c(MOVI)             \
     c(CMP)              \
     c(JA)               \
     c(JMP)              \
     c(RET)              \
+    c(DEC)              \
     c(CAST)             \
     c(PHI)              \
     c(PARAM)            \

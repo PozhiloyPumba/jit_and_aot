@@ -73,6 +73,7 @@ public:
     void SetFunction(Function *newFunction) {
         graph_ = newFunction;
     }
+    void ReplaceInstr(Instruction *target, const std::vector<Instruction *> &replace);
     void AssasinateInstr(Instruction *instr);
     void AddInstrForward(Instruction *instr);
     void AddInstrBackward(Instruction *instr);

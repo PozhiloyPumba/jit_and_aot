@@ -6,8 +6,8 @@
 TEST(Loop_Test, SimpleFirstExample) {
     using namespace IRGen;
 
-    InstructionBuilder builder;
-    IRGenerator gen;
+    auto &builder = InstructionBuilder::GetInstance();
+    auto &gen = IRGenerator::GetInstance();
 
     Function *g = gen.CreateFunction("test", InstrType::VOID, {});
 
@@ -41,8 +41,8 @@ TEST(Loop_Test, SimpleFirstExample) {
 TEST(Loop_Test, SimpleSecondExample) {
     using namespace IRGen;
 
-    InstructionBuilder builder;
-    IRGenerator gen;
+    auto &builder = InstructionBuilder::GetInstance();
+    auto &gen = IRGenerator::GetInstance();
 
     Function *g = gen.CreateFunction("test", InstrType::VOID, {});
 
@@ -79,8 +79,8 @@ TEST(Loop_Test, SimpleSecondExample) {
 TEST(Loop_Test, ThirdSecondExample) {
     using namespace IRGen;
 
-    InstructionBuilder builder;
-    IRGenerator gen;
+    auto &builder = InstructionBuilder::GetInstance();
+    auto &gen = IRGenerator::GetInstance();
 
     Function *g = gen.CreateFunction("test", InstrType::VOID, {});
 
@@ -140,8 +140,8 @@ TEST(Loop_Test, ThirdSecondExample) {
 TEST(Loop_Test, FirstExample) {
     using namespace IRGen;
 
-    InstructionBuilder builder;
-    IRGenerator gen;
+    auto &builder = InstructionBuilder::GetInstance();
+    auto &gen = IRGenerator::GetInstance();
 
     Function *g = gen.CreateFunction("test", InstrType::VOID, {});
 
@@ -179,8 +179,8 @@ TEST(Loop_Test, FirstExample) {
 TEST(Loop_Test, SecondExample) {
     using namespace IRGen;
 
-    InstructionBuilder builder;
-    IRGenerator gen;
+    auto &builder = InstructionBuilder::GetInstance();
+    auto &gen = IRGenerator::GetInstance();
 
     Function *g = gen.CreateFunction("test", InstrType::VOID, {});
 
@@ -259,8 +259,8 @@ TEST(Loop_Test, SecondExample) {
 TEST(Loop_Test, ThirdExample) {
     using namespace IRGen;
 
-    InstructionBuilder builder;
-    IRGenerator gen;
+    auto &builder = InstructionBuilder::GetInstance();
+    auto &gen = IRGenerator::GetInstance();
 
     Function *g = gen.CreateFunction("test", InstrType::VOID, {});
 

@@ -12,8 +12,15 @@ set(BUILD_GTEST ON CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(googletest)
 
+set(TEST_SOURCES
+	dominatorTree.cpp
+	loopTest.cpp
+	livenessAnalysis.cpp
+	peepholePassTest.cpp
+)
+
 set(TEST_EXE test)
-add_executable(${TEST_EXE} dominatorTree.cpp loopTest.cpp livenessAnalysis.cpp)
+add_executable(${TEST_EXE} ${TEST_SOURCES})
 target_link_libraries(${TEST_EXE} gtest_main ir_gen)
 
 set_target_properties(${TEST_EXE} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/$<0:>)

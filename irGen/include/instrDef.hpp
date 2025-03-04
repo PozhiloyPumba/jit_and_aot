@@ -21,15 +21,15 @@ public:
     }
 };
 
-template <typename T> class ImmToValInstr : public Instruction {
+class ImmToValInstr : public Instruction {
 private:
-    T imm_;
+    ImmType imm_;
 
 public:
-    ImmToValInstr(Opcode op, InstrType type, T imm, bool setId = true) : Instruction(op, type, setId), imm_(imm) {}
+    ImmToValInstr(Opcode op, InstrType type, ImmType imm, bool setId = true) : Instruction(op, type, setId), imm_(imm) {}
 
     inline std::string toString() const override {
-        return Instruction::toString() + " @" + std::to_string(instrId_) + " " + std::to_string(imm_);
+        return Instruction::toString() + " @" + std::to_string(instrId_) + " " + IRGen::toString(instrType_, imm_);
     }
 };
 
@@ -40,6 +40,7 @@ public:
             return;
 
         assert(val);
+        val->AddUser(this);
         preds_.push_back(val);
     }
 
@@ -54,6 +55,7 @@ class CastInstr : public Instruction {
 public:
     CastInstr(Opcode op, InstrType type, Instruction *from, bool setId = true) : Instruction(op, type, setId) {
         assert(from);
+        from->AddUser(this);
         preds_.push_back(from);
     }
 
@@ -67,6 +69,8 @@ class CmpInstr : public Instruction {
 public:
     CmpInstr(Opcode op, InstrType type, Instruction *first, Instruction *second, bool setId = true)
         : Instruction(op, type, setId) {
+        first->AddUser(this);
+        second->AddUser(this);
         preds_.push_back(first);
         preds_.push_back(second);
     }
@@ -82,6 +86,8 @@ public:
     TwoValInstr(Opcode op, InstrType type, Instruction *first, Instruction *second, bool setId = true)
         : Instruction(op, type, setId) {
         assert(first && second);
+        first->AddUser(this);
+        second->AddUser(this);
         preds_.push_back(first);
         preds_.push_back(second);
     }
@@ -91,20 +97,24 @@ public:
     }
 };
 
-template <typename T> class ValAndImmInstr : public Instruction {
+class ValAndImmInstr : public Instruction {
 private:
-    T imm_;
+    ImmType imm_;
 
 public:
-    ValAndImmInstr(Opcode op, InstrType type, Instruction *val, T imm, bool setId = true)
+    ValAndImmInstr(Opcode op, InstrType type, Instruction *val, ImmType imm, bool setId = true)
         : Instruction(op, type, setId), imm_(imm) {
         assert(val);
+        val->AddUser(this);
         preds_.push_back(val);
     }
 
     inline std::string toString() const override {
         return Instruction::toString() + " @" + std::to_string(instrId_) + " @" + std::to_string(preds_[0]->GetId()) + " " +
-               std::to_string(imm_);
+               IRGen::toString(instrType_, imm_);
+    }
+    const ImmType &GetImm() const {
+        return imm_;
     }
 };
 
@@ -118,8 +128,10 @@ public:
         : Instruction(op, InstrType::VOID, setId), trueOut_(trueJump), falseOut_(falseJump) {
         assert(trueOut_);
         assert(!falseOut_ == !pred);
-        if (pred) // for jump instr
+        if (pred) { // for jump instr
+            pred->AddUser(this);
             preds_.push_back(pred);
+        }
     }
 
     inline std::string toString() const override {
@@ -135,6 +147,7 @@ public:
 
     inline void SetIncoming(Instruction *val) {
         assert(val);
+        val->AddUser(this);
         preds_.push_back(val);
     }
 

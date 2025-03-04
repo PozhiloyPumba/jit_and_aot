@@ -103,6 +103,15 @@ void BB::AssasinateInstr(Instruction *instr) {
         endBB_ = prev;
 }
 
+void BB::ReplaceInstr(Instruction *target, const std::vector<Instruction *> &replace) {
+    auto *cur = target;
+    for (auto &repl : replace) {
+        InsertInstrAfter(repl, cur);
+        cur = repl;
+    }
+    AssasinateInstr(target);
+}
+
 void BB::AddInstrForward(Instruction *instr) {
     if (!instr || instr->GetBB() || instr->GetPrevInstr() || instr->GetNextInstr())
         throw std::runtime_error("Wrong instr "s + CUR_FUNC_NAME);
