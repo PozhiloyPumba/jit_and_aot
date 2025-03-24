@@ -2,6 +2,7 @@
 #include "IRBuilder.hpp"
 #include <algorithm>
 #include <iostream>
+#include <limits>
 #include <stdexcept>
 
 namespace IRGen {
@@ -74,7 +75,6 @@ Instruction *PeepHolePass::AndPeephole(TwoValInstr *instr) const {
         throw std::runtime_error("Wrong instr with opcode "s + IRGen::toString(instr->GetOpcode()) + " " + CUR_FUNC_NAME);
 
     const auto &inputs = instr->GetInputs();
-    auto &builder = InstructionBuilder::GetInstance();
 
     if (inputs[0] == inputs[1]) { // and x, x -> pass x to others
         auto *bb = instr->GetBB();
@@ -156,7 +156,7 @@ Instruction *PeepHolePass::ShrIPeephole(ValAndImmInstr *instr) const {
                 return;
             }
 
-            if (imm >= sizeof(T) * 8) { // shr x, BIG_NUMBER, mov 0
+            if (size_t(imm) >= sizeof(T) * 8) { // shr x, BIG_NUMBER, mov 0
                 auto *subs = builder.BuildMovI(IRGen::CreateImm(instr->GetType(), 0));
                 auto *bb = instr->GetBB();
                 next = instr->GetNextInstr();

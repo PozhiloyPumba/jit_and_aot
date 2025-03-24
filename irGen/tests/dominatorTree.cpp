@@ -5,7 +5,6 @@
 TEST(DominatorTree_Test, FirstExample) {
     using namespace IRGen;
 
-    auto &builder = InstructionBuilder::GetInstance();
     auto &gen = IRGenerator::GetInstance();
 
     Function *g = gen.CreateFunction("test", InstrType::VOID, {});
@@ -40,7 +39,6 @@ TEST(DominatorTree_Test, FirstExample) {
 TEST(DominatorTree_Test, SecondExample) {
     using namespace IRGen;
 
-    auto &builder = InstructionBuilder::GetInstance();
     auto &gen = IRGenerator::GetInstance();
 
     Function *g = gen.CreateFunction("test", InstrType::VOID, {});
@@ -93,7 +91,6 @@ TEST(DominatorTree_Test, SecondExample) {
 TEST(DominatorTree_Test, ThirdExample) {
     using namespace IRGen;
 
-    auto &builder = InstructionBuilder::GetInstance();
     auto &gen = IRGenerator::GetInstance();
 
     Function *g = gen.CreateFunction("test", InstrType::VOID, {});

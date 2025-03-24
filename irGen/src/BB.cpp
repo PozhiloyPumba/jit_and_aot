@@ -83,8 +83,9 @@ void BB::InsertInstrAfter(Instruction *insert, Instruction *anchor) {
 }
 
 void BB::AssasinateInstr(Instruction *instr) {
-    if (!instr || instr->GetBB() != this)
+    if (!instr || instr->GetBB() != this) {
         throw std::runtime_error("Wrong instr "s + CUR_FUNC_NAME);
+    }
 
 	for(auto &input: instr->GetInputs()) {
 		input->RemoveUser(instr);

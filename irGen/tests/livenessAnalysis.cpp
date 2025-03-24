@@ -6,7 +6,6 @@
 TEST(LinOrder_Test, LinOrderTestFirst) {
     using namespace IRGen;
 
-    auto &builder = InstructionBuilder::GetInstance();
     auto &gen = IRGenerator::GetInstance();
 
     Function *g = gen.CreateFunction("test", InstrType::VOID, {});
@@ -61,7 +60,6 @@ TEST(LinOrder_Test, LinOrderTestFirst) {
 TEST(LinOrder_Test, LinOrderTestSecond) {
     using namespace IRGen;
 
-    auto &builder = InstructionBuilder::GetInstance();
     auto &gen = IRGenerator::GetInstance();
 
     Function *g = gen.CreateFunction("test", InstrType::VOID, {});

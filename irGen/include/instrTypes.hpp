@@ -45,6 +45,7 @@ constexpr static inline ImmType CreateImm(InstrType type, std::integral auto imm
         return static_cast<uint32_t>(imm);
     case InstrType::U64:
         return static_cast<uint64_t>(imm);
+    default:;
     }
     return ImmType();
 }
@@ -71,6 +72,7 @@ constexpr static inline std::string toString(InstrType type, ImmType imm) {
         return std::to_string(std::get<uint32_t>(imm));
     case InstrType::U64:
         return std::to_string(std::get<uint64_t>(imm));
+    default:;
     }
     return "Something went wrong oops....";
 }
