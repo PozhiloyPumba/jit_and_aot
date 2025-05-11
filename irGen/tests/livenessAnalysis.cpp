@@ -2,8 +2,13 @@
 #include "IRBuilder.hpp"
 #include "function.hpp"
 #include <gtest/gtest.h>
+#include "helpers/defines.hpp"
 
-TEST(LinOrder_Test, LinOrderTestFirst) {
+
+#undef GTEST_GROUP_CUSTOM
+#define GTEST_GROUP_CUSTOM LinOrder_Test
+
+DEFINE_GTEST_CUSTOM(LinOrderTestFirst) {
     using namespace IRGen;
 
     auto &gen = IRGenerator::GetInstance();
@@ -57,7 +62,7 @@ TEST(LinOrder_Test, LinOrderTestFirst) {
     ASSERT_EQ(order, std::vector<BB *>({A, B, C, D, E, F, I, J, K, L, M, N, O, P, G, H}));
 }
 
-TEST(LinOrder_Test, LinOrderTestSecond) {
+DEFINE_GTEST_CUSTOM(LinOrderTestSecond) {
     using namespace IRGen;
 
     auto &gen = IRGenerator::GetInstance();
@@ -93,8 +98,11 @@ TEST(LinOrder_Test, LinOrderTestSecond) {
     ASSERT_EQ(order, std::vector<BB *>({A, B, D, C, F, G, H, E}));
 }
 
+#undef GTEST_GROUP_CUSTOM
+#define GTEST_GROUP_CUSTOM Liveness_Analysis_Test
+
 // tests for correct liveness calculation, but not correct graph
-TEST(Liveness_Analysis_Test, LivenessTestLecture_1) {
+DEFINE_GTEST_CUSTOM(LivenessTestLecture_1) {
     using namespace IRGen;
 
     auto &builder = InstructionBuilder::GetInstance();
@@ -190,7 +198,7 @@ TEST(Liveness_Analysis_Test, LivenessTestLecture_1) {
     ASSERT_EQ(b3->GetLiveRange(), LiveRange(20, 26));
 }
 
-TEST(Liveness_Analysis_Test, LivenessTestLecture_2) {
+DEFINE_GTEST_CUSTOM(LivenessTestLecture_2) {
     using namespace IRGen;
 
     auto &builder = InstructionBuilder::GetInstance();
@@ -307,7 +315,7 @@ TEST(Liveness_Analysis_Test, LivenessTestLecture_2) {
     ASSERT_EQ(b3->GetLiveRange(), LiveRange(24, 34));
 }
 
-TEST(Liveness_Analysis_Test, LivenessTest3) {
+DEFINE_GTEST_CUSTOM(LivenessTest3) {
     using namespace IRGen;
 
     auto &builder = InstructionBuilder::GetInstance();

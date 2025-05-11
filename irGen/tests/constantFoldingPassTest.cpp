@@ -2,8 +2,13 @@
 #include "function.hpp"
 #include "passes/constantFoldingPass.hpp"
 #include <gtest/gtest.h>
+#include "helpers/defines.hpp"
 
-TEST(ConstantFoldingPassTest, first_test) {
+
+#undef GTEST_GROUP_CUSTOM
+#define GTEST_GROUP_CUSTOM ConstantFoldingPassTest
+
+DEFINE_GTEST_CUSTOM(first_test) {
     using namespace IRGen;
 
     auto &builder = InstructionBuilder::GetInstance();
@@ -41,7 +46,7 @@ TEST(ConstantFoldingPassTest, first_test) {
     // g->dump();
 }
 
-TEST(ConstantFoldingPassTest, second_test) {
+DEFINE_GTEST_CUSTOM(second_test) {
     using namespace IRGen;
 
     auto &builder = InstructionBuilder::GetInstance();
@@ -67,7 +72,7 @@ TEST(ConstantFoldingPassTest, second_test) {
     // g->dump();
 }
 
-TEST(ConstantFoldingPassTest, shr_test) {
+DEFINE_GTEST_CUSTOM(shr_test) {
     using namespace IRGen;
 
     auto &builder = InstructionBuilder::GetInstance();

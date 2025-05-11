@@ -24,4 +24,7 @@
 #include <source_location>
 #define CUR_FUNC_NAME std::source_location::current().function_name()
 
+#define GTEST_GROUP_CUSTOM Default_Test 
+#define DEFINE_GTEST_CUSTOM(name) TEST(GTEST_GROUP_CUSTOM, name)
+
 #endif

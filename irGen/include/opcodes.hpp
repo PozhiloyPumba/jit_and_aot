@@ -26,6 +26,8 @@ namespace IRGen {
     c(CAST)             \
     c(PHI)              \
     c(PARAM)            \
+	c(NULLCHECK)		\
+	c(BOUNDSCHECK)		\
     c(INVALID_INSTR)
 // clang-format on
 

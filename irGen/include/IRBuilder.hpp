@@ -171,6 +171,18 @@ public:
         instructions_.push_back(inst);
         return inst;
     }
+
+	OneValInstr* BuildNullcheck(InstrType type, Instruction *val) {
+		auto* inst = new OneValInstr(Opcode::NULLCHECK, type, val);	
+        instructions_.push_back(inst);
+        return inst;
+	}
+
+	ValAndImmInstr* BuildBoundsCheck(Instruction *val, int64_t imm) {
+		auto* inst = new ValAndImmInstr(Opcode::BOUNDSCHECK, InstrType::I64, val, CreateImm(InstrType::I64, imm));	
+        instructions_.push_back(inst);
+        return inst;
+	}
 };
 } // namespace IRGen
 #endif

@@ -2,8 +2,13 @@
 #include "function.hpp"
 #include <gtest/gtest.h>
 #include <loopAnalyzer.hpp>
+#include "helpers/defines.hpp"
 
-TEST(Loop_Test, SimpleFirstExample) {
+
+#undef GTEST_GROUP_CUSTOM
+#define GTEST_GROUP_CUSTOM Loop_Test
+
+DEFINE_GTEST_CUSTOM(SimpleFirstExample) {
     using namespace IRGen;
 
     auto &gen = IRGenerator::GetInstance();
@@ -37,7 +42,7 @@ TEST(Loop_Test, SimpleFirstExample) {
     EXPECT_TRUE(loopB->GetReducible());
 }
 
-TEST(Loop_Test, SimpleSecondExample) {
+DEFINE_GTEST_CUSTOM(SimpleSecondExample) {
     using namespace IRGen;
 
     auto &gen = IRGenerator::GetInstance();
@@ -74,7 +79,7 @@ TEST(Loop_Test, SimpleSecondExample) {
     EXPECT_TRUE(loopB->GetReducible());
 }
 
-TEST(Loop_Test, ThirdSecondExample) {
+DEFINE_GTEST_CUSTOM(ThirdSecondExample) {
     using namespace IRGen;
 
     auto &gen = IRGenerator::GetInstance();
@@ -134,7 +139,7 @@ TEST(Loop_Test, ThirdSecondExample) {
     EXPECT_TRUE(loopB->GetReducible());
 }
 
-TEST(Loop_Test, FirstExample) {
+DEFINE_GTEST_CUSTOM(FirstExample) {
     using namespace IRGen;
 
     auto &gen = IRGenerator::GetInstance();
@@ -172,7 +177,7 @@ TEST(Loop_Test, FirstExample) {
     ASSERT_EQ(loops.size(), 0);
 }
 
-TEST(Loop_Test, SecondExample) {
+DEFINE_GTEST_CUSTOM(SecondExample) {
     using namespace IRGen;
 
     auto &gen = IRGenerator::GetInstance();
@@ -251,7 +256,7 @@ TEST(Loop_Test, SecondExample) {
     EXPECT_TRUE(loopE->GetReducible());
 }
 
-TEST(Loop_Test, ThirdExample) {
+DEFINE_GTEST_CUSTOM(ThirdExample) {
     using namespace IRGen;
 
     auto &gen = IRGenerator::GetInstance();

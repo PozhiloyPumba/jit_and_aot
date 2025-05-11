@@ -7,6 +7,7 @@ set(SOURCES
     livenessAnalysis.cpp
     passes/peepholePass.cpp
     passes/constantFoldingPass.cpp
+    passes/eliminateChecksPass.cpp
 )
 
 add_library(ir_gen ${SOURCES})

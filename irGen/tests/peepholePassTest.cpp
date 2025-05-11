@@ -2,8 +2,13 @@
 #include "function.hpp"
 #include "passes/peepholePass.hpp"
 #include <gtest/gtest.h>
+#include "helpers/defines.hpp"
 
-TEST(PeepholePassTest, sub_test) {
+
+#undef GTEST_GROUP_CUSTOM
+#define GTEST_GROUP_CUSTOM PeepholePass_Test
+
+DEFINE_GTEST_CUSTOM(sub_test) {
     using namespace IRGen;
 
     auto &builder = InstructionBuilder::GetInstance();
@@ -44,7 +49,7 @@ TEST(PeepholePassTest, sub_test) {
     // g->dump();
 }
 
-TEST(PeepholePassTest, and_test) {
+DEFINE_GTEST_CUSTOM(and_test) {
     using namespace IRGen;
 
     auto &builder = InstructionBuilder::GetInstance();
@@ -85,7 +90,7 @@ TEST(PeepholePassTest, and_test) {
     // g->dump();
 }
 
-TEST(PeepholePassTest, shr_test) {
+DEFINE_GTEST_CUSTOM(shr_test) {
     using namespace IRGen;
 
     auto &builder = InstructionBuilder::GetInstance();

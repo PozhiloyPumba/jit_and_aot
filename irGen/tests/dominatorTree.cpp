@@ -1,8 +1,14 @@
 #include "IRBuilder.hpp"
 #include "function.hpp"
 #include <gtest/gtest.h>
+#include "helpers/defines.hpp"
 
-TEST(DominatorTree_Test, FirstExample) {
+
+#undef GTEST_GROUP_CUSTOM
+#define GTEST_GROUP_CUSTOM DominatorTree_Test
+
+
+DEFINE_GTEST_CUSTOM(FirstExample) {
     using namespace IRGen;
 
     auto &gen = IRGenerator::GetInstance();
@@ -36,7 +42,7 @@ TEST(DominatorTree_Test, FirstExample) {
     ASSERT_EQ(d[G], empty);
 }
 
-TEST(DominatorTree_Test, SecondExample) {
+DEFINE_GTEST_CUSTOM(SecondExample) {
     using namespace IRGen;
 
     auto &gen = IRGenerator::GetInstance();
@@ -88,7 +94,7 @@ TEST(DominatorTree_Test, SecondExample) {
     ASSERT_EQ(d[K], empty);
 }
 
-TEST(DominatorTree_Test, ThirdExample) {
+DEFINE_GTEST_CUSTOM(ThirdExample) {
     using namespace IRGen;
 
     auto &gen = IRGenerator::GetInstance();
